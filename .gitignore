@@ -1,0 +1,9 @@
+# dados brutos grandes: baixar de novo pelas fontes listadas em docs/FONTES.md
+dados/brutos_grandes/
+*.npy
+*.img
+*.tif
+*.ecw
+__pycache__/
+.DS_Store
+Thumbs.db

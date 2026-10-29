@@ -1,0 +1,38 @@
+[
+ {
+  "id": "pedreiras",
+  "name": "Pedreiras e Trizidela do Vale",
+  "short": "Pedreiras",
+  "uf": "MA",
+  "river": "Mearim",
+  "lat": -4.57,
+  "lon": -44.6,
+  "file": "data/pedreiras.json",
+  "nb": 21466,
+  "years": 48,
+  "since": 1978,
+  "record": {
+   "h": 10.1,
+   "y": 1985
+  },
+  "station": "Pedreiras II (ANA 33281000)"
+ },
+ {
+  "id": "colatina",
+  "name": "Colatina",
+  "short": "Colatina",
+  "uf": "ES",
+  "river": "Doce",
+  "lat": -19.53,
+  "lon": -40.63,
+  "file": "data/colatina.json",
+  "nb": 34334,
+  "years": 79,
+  "since": 1938,
+  "record": {
+   "h": 8.9,
+   "y": 2013
+  },
+  "station": "Colatina Ponte (ANA 56994500)"
+ }
+]

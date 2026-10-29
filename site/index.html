@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+/* equivalente ao esqueleto que a página publicada no Claude recebe */
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<title>Duas Margens</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: full-bleed 3D city on the floodplain; floating glass panels (summary left, detail card right) and a water-level dock along the bottom.
+   No celular: mapa em cima, painel embaixo. Mesmo sistema visual do Camadas São Paulo. */
+:root{
+  --ground:#e4e4e9; --block:#f5f5f7; --ink:#1d1d1f; --muted:#6e6e73; --line:rgba(0,0,0,.08);
+  --panel:rgba(255,255,255,.66); --panel-solid:rgba(255,255,255,.88); --accent:#0071e3; --water:#2f7fd8; --hit:#e0352b;
+  --seg-track:rgba(118,118,128,.12); --seg-on:#fff; --seg-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04);
+  --fill:rgba(118,118,128,.12); --fill-hover:rgba(118,118,128,.18);
+  --shadow:0 0 0 .5px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05),0 18px 44px rgba(0,0,0,.08);
+  --haze:rgba(245,245,247,.9); --blur:30px; --r:22px; --sheet:#f2f2f5;
+  --t-lo:#b9bcc4; --t-hi:#f4f4f6; --road:#8e8e93; --sgb:#5e5ce6; --slide:#bf5af2; --obs:#ff9f0a;
+  --g-ocean-a:#f7f8fb; --g-ocean-b:#dde2ea; --g-land:#ffffff; --g-br:#e6efff; --g-line:rgba(60,70,90,.18); --g-shade:rgba(30,40,60,.22); --g-halo:rgba(0,113,227,.10);
+  --f-display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",system-ui,sans-serif;
+  --f-body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#0b0b0d; --block:#48484a; --ink:#f5f5f7; --muted:#98989d; --line:rgba(255,255,255,.1);
+  --panel:rgba(30,30,32,.62); --panel-solid:rgba(36,36,38,.9); --accent:#2997ff; --water:#3a8ef0; --hit:#ff5b4f;
+  --seg-track:rgba(118,118,128,.24); --seg-on:#636366; --seg-shadow:0 3px 8px rgba(0,0,0,.3);
+  --fill:rgba(118,118,128,.24); --fill-hover:rgba(118,118,128,.32);
+  --shadow:0 0 0 .5px rgba(255,255,255,.08),0 18px 44px rgba(0,0,0,.45); --haze:rgba(0,0,0,.82); --sheet:#141416;
+  --t-lo:#0e0e10; --t-hi:#3a3a3e; --road:#7c7c82; --sgb:#7d7aff; --slide:#da8fff; --obs:#ffb340; --g-ocean-a:#26282d; --g-ocean-b:#111215; --g-land:#3a3b40; --g-br:#203453; --g-line:rgba(255,255,255,.12); --g-shade:rgba(0,0,0,.55); --g-halo:rgba(41,151,255,.14); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ground:#0b0b0d; --block:#48484a; --ink:#f5f5f7; --muted:#98989d; --line:rgba(255,255,255,.1);
+  --panel:rgba(30,30,32,.62); --panel-solid:rgba(36,36,38,.9); --accent:#2997ff; --water:#3a8ef0; --hit:#ff5b4f;
+  --seg-track:rgba(118,118,128,.24); --seg-on:#636366; --seg-shadow:0 3px 8px rgba(0,0,0,.3);
+  --fill:rgba(118,118,128,.24); --fill-hover:rgba(118,118,128,.32);
+  --shadow:0 0 0 .5px rgba(255,255,255,.08),0 18px 44px rgba(0,0,0,.45); --haze:rgba(0,0,0,.82); --sheet:#141416;
+  --t-lo:#0e0e10; --t-hi:#3a3a3e; --road:#7c7c82; --sgb:#7d7aff; --slide:#da8fff; --obs:#ffb340; --g-ocean-a:#26282d; --g-ocean-b:#111215; --g-land:#3a3b40; --g-br:#203453; --g-line:rgba(255,255,255,.12); --g-shade:rgba(0,0,0,.55); --g-halo:rgba(41,151,255,.14); color-scheme:dark}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--ground);color:var(--ink);font-family:var(--f-body);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:-.01em;overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#map{position:fixed;inset:0}
+.haze{position:fixed;left:0;right:0;top:0;height:42%;z-index:1;pointer-events:none;background:linear-gradient(to bottom,var(--haze) 0%,var(--haze) 28%,color-mix(in srgb,var(--haze) 55%,transparent) 55%,transparent 100%)}
+.ui{position:fixed;z-index:2}
+.panel{display:contents}
+.glass{background:var(--panel);backdrop-filter:blur(var(--blur)) saturate(1.8);-webkit-backdrop-filter:blur(var(--blur)) saturate(1.8);box-shadow:var(--shadow)}
+button,input{font:inherit;color:inherit;letter-spacing:inherit}
+button{background:none;border:0;cursor:pointer}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:2px;border-radius:10px}
+.close{width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--muted);display:grid;place-items:center;transition:background .2s;flex:none}
+.close:hover{background:var(--fill-hover)}
+.close svg{width:11px;height:11px}
+
+.seg{display:flex;gap:2px;padding:2px;background:var(--seg-track);border-radius:10px}
+.seg button{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;white-space:nowrap;color:var(--ink);transition:background .25s,box-shadow .25s}
+.seg button[aria-pressed="true"]{background:var(--seg-on);box-shadow:var(--seg-shadow);font-weight:600}
+
+.brand{top:calc(22px + env(safe-area-inset-top,0px));left:max(24px,env(safe-area-inset-left,0px));pointer-events:none}
+.brand h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(40px,5.4vw,72px);line-height:1;letter-spacing:-.035em;text-wrap:balance}
+.brand h1 small{display:block;font-family:var(--f-body);font-size:17px;font-weight:600;letter-spacing:-.01em;color:var(--accent);margin-bottom:6px}
+.brand .byline{margin:12px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font-size:14px;pointer-events:auto}
+.brand .who{color:var(--muted)}
+.brand .social{display:flex;gap:6px}
+.brand .soc{display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 10px;border-radius:999px;color:var(--ink)!important;text-decoration:none;font-size:13px;font-weight:500;transition:transform .2s,background .2s}
+.brand .soc:hover{background:var(--panel-solid);transform:scale(1.03)}
+.brand .soc svg{width:14px;height:14px;flex:none}
+.brand p{margin:12px 0 0;max-width:38ch;font-size:15px;line-height:1.45;color:var(--muted);font-weight:500}
+.modes{top:calc(24px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);border-radius:12px;padding:3px}
+.year{top:calc(18px + env(safe-area-inset-top,0px));right:max(24px,env(safe-area-inset-right,0px));text-align:right}
+.year b{display:block;font-family:var(--f-display);font-weight:700;font-size:clamp(44px,6vw,80px);line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.year b small{font-size:.45em;letter-spacing:-.02em;color:var(--muted);font-weight:600;margin-left:4px}
+.year span{font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tools{display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-top:12px;flex-wrap:wrap}
+.pill{padding:7px 14px;border-radius:999px;font-size:13px;font-weight:500}
+.pill:hover{background:var(--panel-solid)}
+
+.legend{top:calc(250px + env(safe-area-inset-top,0px));left:max(24px,env(safe-area-inset-left,0px));width:304px;max-height:calc(100% - 400px);overflow:auto;border-radius:var(--r);padding:16px 16px 14px;scrollbar-width:thin;box-sizing:border-box}
+.legend h2{margin:0 0 8px;padding:0 6px;font-family:var(--f-display);font-size:20px;font-weight:700;letter-spacing:-.02em}
+.legend h3{margin:12px 6px 6px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.row{box-sizing:border-box;display:grid;grid-template-columns:12px 1fr auto;gap:10px;align-items:center;width:100%;text-align:left;padding:7px 8px;border-radius:10px;font-size:13.5px}
+.row i{width:12px;height:12px;border-radius:50%;display:block;box-shadow:inset 0 0 0 .5px rgba(0,0,0,.15)}
+.row i.sq{border-radius:3px}
+.row i.ring{background:none!important;box-shadow:inset 0 0 0 2px var(--c)}
+.row span{min-width:0}
+.row em{font-style:normal;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.row em.alert{color:var(--hit);font-weight:600}
+.big{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 6px}
+.big div{background:var(--fill);border-radius:14px;padding:10px 12px}
+.big b{display:block;font-family:var(--f-display);font-size:24px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1}
+.big b.alert{color:var(--hit)}
+.big span{font-size:12px;color:var(--muted)}
+.ramp{height:10px;border-radius:999px;margin:6px 6px 8px}
+.ramp-lab{display:flex;justify-content:space-between;margin:0 6px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.hint{margin:10px 6px 0;font-size:12.5px;color:var(--muted);line-height:1.45}
+
+.card{top:calc(232px + env(safe-area-inset-top,0px));right:max(24px,env(safe-area-inset-right,0px));width:320px;max-height:calc(100% - 370px);overflow:auto;box-sizing:border-box;border-radius:var(--r);padding:20px;background:var(--panel-solid);animation:pop .35s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+.card .close{position:absolute;top:14px;right:14px}
+.card .yr{font-family:var(--f-display);font-weight:700;font-size:48px;line-height:1;letter-spacing:-.045em;font-variant-numeric:tabular-nums}
+.card .yr small{font-size:22px;color:var(--muted);margin-left:3px}
+.card .dname{font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1.08;letter-spacing:-.03em;padding-right:34px}
+.card .per{display:inline-flex;align-items:center;gap:6px;margin:10px 0 12px;padding:4px 10px 4px 8px;border-radius:999px;background:var(--fill);font-size:12.5px;font-weight:500}
+.card .per::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--pc)}
+.card dl{display:grid;grid-template-columns:auto 1fr;margin:0;font-size:13.5px;border-radius:12px;background:var(--fill);overflow:hidden}
+.card dt,.card dd{padding:8px 12px;border-top:.5px solid var(--line)}
+.card dt:first-of-type,.card dd:first-of-type{border-top:0}
+.card dt{color:var(--muted)}
+.card dd{margin:0;min-width:0;overflow-wrap:anywhere;text-align:right;font-weight:500;font-variant-numeric:tabular-nums}
+.card p{font-size:13.5px;line-height:1.5;margin:12px 0 0}
+.card .tb{margin-top:12px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--accent) 11%,transparent);font-size:13px;line-height:1.45}
+
+.timeline{left:max(24px,env(safe-area-inset-left,0px));right:max(24px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));padding:12px 18px 10px 12px;border-radius:var(--r);display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.play{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;transition:transform .2s,filter .2s}
+.play:hover{transform:scale(1.06);filter:brightness(1.08)}
+.play:active{transform:scale(.96)}
+.play svg{width:16px;height:16px}
+.tl-wrap{position:relative;min-width:0}
+#hist{display:block;width:100%;height:52px;cursor:ew-resize;touch-action:none}
+.ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
+.events{position:relative;height:22px;margin-bottom:4px}
+.ev{position:absolute;bottom:0;transform:translateX(-50%);padding:2px 8px;border-radius:999px;background:var(--fill);font-size:11.5px;font-weight:600;white-space:nowrap;color:var(--ink);font-variant-numeric:tabular-nums}
+.ev:hover{background:var(--fill-hover)}
+.ev.onset{background:none;color:var(--muted);font-weight:500}
+.ev .short{display:none}
+.cityseg{border-radius:999px}
+.cityseg button{padding:5px 12px;border-radius:999px;font-size:12.5px}
+.obsline{display:inline-block;width:14px;height:0;border-top:2px dashed var(--obs);margin-right:2px}
+@media (max-width:820px){.ev.minor{display:none}.ev .full{display:none}.ev .short{display:inline}}
+.nav-hint{position:absolute;right:-6px;top:-50px;padding:5px 12px;border-radius:999px;font-size:12px;color:var(--muted);white-space:nowrap}
+
+.about{inset:0;z-index:5;background:color-mix(in srgb,var(--ground) 40%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:grid;place-items:center;padding:20px max(16px,env(safe-area-inset-right,0px)) 20px max(16px,env(safe-area-inset-left,0px));animation:fade .25s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.about article{box-sizing:border-box;max-width:680px;width:100%;max-height:100%;overflow:auto;background:var(--panel-solid);backdrop-filter:blur(40px) saturate(1.8);-webkit-backdrop-filter:blur(40px) saturate(1.8);box-shadow:var(--shadow);border-radius:28px;padding:28px 32px 30px;font-size:15px;line-height:1.55;position:relative;animation:pop .4s cubic-bezier(.2,.9,.3,1.1)}
+.about .close{position:absolute;top:18px;right:18px}
+.about h2{margin:0 0 10px;font-family:var(--f-display);font-weight:700;font-size:34px;letter-spacing:-.035em;line-height:1.1;padding-right:40px}
+.about h3{margin:22px 0 6px;font-size:17px;font-weight:600;letter-spacing:-.02em}
+.about ul{margin:0;padding-left:20px}
+.about li{margin:4px 0}
+.about a{color:var(--accent);text-decoration:none}
+.about a:hover{text-decoration:underline}
+.about .note{margin-top:18px;font-size:13px;color:var(--muted)}
+.vbars{display:grid;gap:8px;margin:10px 0 0;padding:12px 14px;border-radius:14px;background:var(--fill)}
+.vbars div{display:grid;grid-template-columns:130px 1fr 44px;gap:10px;align-items:center;font-size:13.5px}
+.vbars i{display:block;height:8px;border-radius:999px;background:var(--accent)}
+.vbars span:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.loading{inset:0;z-index:4;display:grid;place-items:center;align-content:center;gap:14px;font-size:14px;color:var(--muted)}
+.loading::before{content:'';width:28px;height:28px;margin:0 auto;border-radius:50%;border:3px solid var(--fill);border-top-color:var(--muted);animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media (max-width:820px){
+  :root{--blur:16px;--maph:54vh}
+  #map{bottom:auto;height:var(--maph)}
+  .haze{height:calc(var(--maph) * .32)}
+  .brand{left:max(16px,env(safe-area-inset-left,0px));top:calc(12px + env(safe-area-inset-top,0px))}
+  .brand p,.brand .byline{display:none}
+  .brand h1{font-size:30px}
+  .brand h1 small{font-size:13px;margin-bottom:2px}
+  .year{right:max(16px,env(safe-area-inset-right,0px));top:calc(12px + env(safe-area-inset-top,0px))}
+  .year b{font-size:34px}
+  .year span{font-size:12px}
+  .tools{margin-top:8px;gap:6px}
+  .pill{padding:6px 10px;font-size:12px}
+  .nav-hint{display:none}
+  .panel{display:flex;flex-direction:column;gap:12px;position:fixed;z-index:2;left:0;right:0;top:var(--maph);bottom:0;overflow-y:auto;overscroll-behavior:contain;
+    padding:12px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:var(--sheet);box-shadow:0 -1px 0 var(--line);box-sizing:border-box}
+  .panel>.ui{flex:none;position:relative;inset:auto;transform:none;width:auto;max-height:none;left:auto;right:auto;top:auto;bottom:auto}
+  .panel .glass{background:var(--panel-solid);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .modes{order:1;overflow-x:auto;scrollbar-width:none;align-self:stretch}
+  .modes button{flex:1}
+  .timeline{order:0;padding:10px 14px 8px 10px;gap:10px}
+  .card{order:2;animation:none}
+  .legend{order:3}
+  #hist{height:46px}
+  .play{width:40px;height:40px}
+  .about article{padding:22px 20px 24px;border-radius:24px}
+  .about h2{font-size:28px}
+  .vbars div{grid-template-columns:96px 1fr 40px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){:root{--panel:var(--panel-solid)}}
+
+/* globo */
+.globeui{position:fixed;z-index:2}
+#globe{position:fixed;inset:0;z-index:1}
+#globeCanvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.gbrand{top:calc(22px + env(safe-area-inset-top,0px));left:max(24px,env(safe-area-inset-left,0px));pointer-events:none}
+.gbrand h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(40px,5.4vw,72px);line-height:1;letter-spacing:-.035em}
+.gbrand h1 small{display:block;font-family:var(--f-body);font-size:17px;font-weight:600;letter-spacing:-.01em;color:var(--accent);margin-bottom:6px}
+.gbrand p{margin:12px 0 0;max-width:40ch;font-size:15px;line-height:1.45;color:var(--muted);font-weight:500}
+.gbrand .byline{margin:12px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font-size:14px;pointer-events:auto}
+.glist{right:max(24px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);width:330px;border-radius:var(--r);padding:16px;box-sizing:border-box;max-height:calc(100% - 160px);overflow:auto}
+.glist h2{margin:0 0 2px;padding:0 6px;font-family:var(--f-display);font-size:20px;font-weight:700;letter-spacing:-.02em}
+.glist .sub{margin:0 6px 10px;font-size:12.5px;color:var(--muted)}
+.cityrow{display:grid;gap:2px;width:100%;text-align:left;padding:10px 12px;border-radius:14px;transition:background .2s,transform .2s}
+.cityrow:hover,.cityrow.on{background:var(--fill-hover)}
+.cityrow:active{transform:scale(.98)}
+.cityrow .cn{font-family:var(--f-display);font-size:17px;font-weight:600;letter-spacing:-.02em}
+.cityrow .cm{font-size:13px;color:var(--accent);font-weight:500}
+.cityrow .cs{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.glist .soon{margin:10px 6px 0;padding-top:10px;border-top:.5px solid var(--line);font-size:12.5px;color:var(--muted);line-height:1.45}
+.ghint{left:50%;transform:translateX(-50%);bottom:calc(22px + env(safe-area-inset-bottom,0px));padding:7px 14px;border-radius:999px;font-size:12.5px;color:var(--muted);white-space:nowrap}
+.gtools{top:calc(22px + env(safe-area-inset-top,0px));right:max(24px,env(safe-area-inset-right,0px))}
+:root[data-view="globe"] .cityui{display:none!important}
+:root[data-view="city"] .globeui{display:none!important}
+.back{display:inline-flex;align-items:center;gap:6px}
+.back svg{width:12px;height:12px}
+@media (max-width:820px){
+  #globe{bottom:auto;height:56vh}
+  .gbrand{left:max(16px,env(safe-area-inset-left,0px));top:calc(12px + env(safe-area-inset-top,0px))}
+  .gbrand p,.gbrand .byline{display:none}
+  .gbrand h1{font-size:30px}
+  .gbrand h1 small{font-size:13px;margin-bottom:2px}
+  .gtools{right:max(16px,env(safe-area-inset-right,0px));top:calc(14px + env(safe-area-inset-top,0px))}
+  .glist{top:56vh;left:0;right:0;bottom:0;transform:none;width:auto;max-height:none;border-radius:0;background:var(--sheet);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 -1px 0 var(--line);
+    padding:14px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+  .ghint{bottom:auto;top:calc(56vh - 44px)}
+}
+</style>
+
+<script>document.documentElement.dataset.view="globe";</script>
+<div id="globe" class="globeui"><canvas id="globeCanvas" role="img" aria-label="Globo terrestre com as cidades mapeadas. Arraste para girar."></canvas></div>
+<header class="ui gbrand globeui">
+  <h1><small>Cheias no Brasil</small>Duas margens</h1>
+  <div class="byline"><span class="who" style="color:var(--muted)">por Thais Adeodato</span></div>
+  <p>Cidades construídas na planície de um rio. Escolha uma para ver, construção por construção, até onde a água chega quando o rio sobe.</p>
+</header>
+<div class="ui gtools globeui"><button id="aboutBtn2" class="pill glass" type="button">Sobre e método</button></div>
+<aside class="ui glist glass globeui" aria-label="Cidades mapeadas">
+  <h2>Cidades mapeadas</h2>
+  <p class="sub" id="cityCount"></p>
+  <div id="cityList"></div>
+  <p class="soon">O método usa apenas dados públicos nacionais, então pode ser repetido em outras cidades à beira de rios.</p>
+</aside>
+<div class="ui ghint glass globeui">Arraste para girar · toque numa cidade</div>
+<div class="haze cityui" aria-hidden="true"></div>
+<div id="map" class="cityui" role="img" aria-label="Mapa 3D das construções e da água do rio"></div>
+<div class="ui loading" id="loading">carregando…</div>
+
+<header class="ui brand cityui">
+  <h1><small>Duas margens</small><span id="riverName">Mearim</span></h1>
+  <div class="byline">
+    <span class="who">por Thais Adeodato</span>
+    <span class="social">
+      <a class="soc glass" href="https://www.linkedin.com/in/thais-morais-adeodato-porto/" target="_blank" rel="noopener" aria-label="LinkedIn de Thais Adeodato"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="1" width="14" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"></rect><path d="M4.6 6.8v4.6M4.6 4.7v.1M7.4 11.4V6.8m0 2.2c0-1.3.8-2.3 2-2.3s1.9.8 1.9 2.2v2.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg><span>LinkedIn</span></a>
+      <a class="soc glass" href="https://www.instagram.com/thais.adeodato/" target="_blank" rel="noopener" aria-label="Instagram de Thais Adeodato"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" rx="4" fill="none" stroke="currentColor" stroke-width="1.4"></rect><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.4"></circle><circle cx="11.7" cy="4.3" r=".8" fill="currentColor"></circle></svg><span>@thais.adeodato</span></a>
+    </span>
+  </div>
+  <p id="tagline"></p>
+</header>
+
+<div class="ui year cityui">
+  <b id="lvBig">–<small>m</small></b>
+  <span id="lvSub"></span>
+  <div class="tools">
+    <button id="globeBtn" class="pill glass back" type="button"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 2L3.5 6l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Outras cidades</button>
+    <button id="aboutBtn" class="pill glass" type="button">Sobre e método</button>
+  </div>
+</div>
+
+<div class="panel cityui" id="panel">
+  <nav class="ui modes seg glass" aria-label="Camadas">
+    <button data-mode="water" aria-pressed="true" type="button">Água</button>
+    <button data-mode="reach" aria-pressed="false" type="button">Suscetibilidade</button>
+    <button data-mode="sgb" aria-pressed="false" type="button">Dados oficiais</button>
+  </nav>
+
+  <div class="ui timeline glass">
+    <button class="play" id="play" type="button" aria-label="Encher: subir a régua até a maior cheia"><svg viewBox="0 0 16 16" aria-hidden="true"><path id="playIco" d="M4.5 2.6v10.8c0 .6.7 1 1.2.7l8.4-5.4a.8.8 0 000-1.4L5.7 1.9c-.5-.3-1.2.1-1.2.7z" fill="currentColor"></path></svg></button>
+    <div class="tl-wrap">
+      <span class="nav-hint glass">Arraste para girar · botão direito ou Shift para inclinar · role para aproximar</span>
+      <div class="events" id="events"></div>
+      <canvas id="hist" role="slider" tabindex="0" aria-label="Régua do rio: arraste para escolher o nível"></canvas>
+      <div class="ticks" id="ticks"></div>
+    </div>
+  </div>
+
+  <aside class="ui card glass" id="card" hidden aria-live="polite"></aside>
+  <aside class="ui legend glass" id="legend" aria-live="polite"></aside>
+</div>
+
+<div class="ui about" id="about" hidden>
+  <article role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <button class="close" id="aboutClose" type="button" aria-label="Fechar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    <h2 id="aboutTitle">Sobre e método</h2>
+    <p>Cidades construídas na planície de um rio que transborda com frequência, mapeadas construção por construção com o mesmo método e só com dados públicos. A régua de cada mapa é a da estação fluviométrica da ANA na cidade, a mesma citada nas notícias das cheias. Abra uma cidade para ver como ela foi calibrada e validada.</p>
+    <h3>Como a água foi calculada</h3>
+    <p>O relevo é o ANADEM, modelo de terreno da ANA e da UFRGS que remove o efeito da vegetação. Para cada ponto, o modelo mede a altura em relação ao rio mais próximo. Um ponto só fica alagado se a água conseguir chegar até ele a partir do rio sem passar por um terreno mais alto, então baixadas isoladas atrás de um morro continuam secas. Cada construção é marcada pelo nível em que a água toca o seu contorno.</p>
+
+    <div id="aboutCity" hidden></div>
+    <h3>Limites</h3>
+    <ul>
+      <li>O ANADEM remove árvores, mas não construções. Na área urbana o terreno ainda pode estar um pouco acima do chão real.</li>
+      <li>"Alcançada" quer dizer que a água toca o contorno da construção, não que entrou na casa. Com relevo de 30 m, a mancha tende a ser mais larga nas bordas do que nas cheias reais.</li>
+      <li>O modelo trata a cheia do rio principal. Cheias próprias dos afluentes, enxurradas e alagamentos por chuva forte ficam de fora.</li>
+      <li>Os contornos das construções foram detectados por IA em imagens de satélite (Google Open Buildings e Microsoft). Algumas podem faltar ou estar juntas. A altura é estimada pelo tamanho, porque a base não traz altura.</li>
+      <li>É um mapa de suscetibilidade, para entender o território. Não é previsão nem alerta. Em emergência, ligue para a Defesa Civil (199) ou os Bombeiros (193).</li>
+    </ul>
+    <h3>Fontes gerais</h3>
+    <ul>
+      <li>Régua e cheias: ANA, <a href="https://www.snirh.gov.br/hidroweb/serieshistoricas" target="_blank" rel="noopener">HidroWeb</a>, estação fluviométrica de cada cidade.</li>
+      <li>Relevo: <a href="https://www.ufrgs.br/hge/anadem-modelo-digital-de-terreno-mdt/" target="_blank" rel="noopener">ANADEM v1</a> (ANA e IPH/UFRGS), 30 m.</li>
+      <li>Construções: <a href="https://overturemaps.org/" target="_blank" rel="noopener">Overture Maps</a>, release 2026-09-23 (Google Open Buildings, Microsoft e OpenStreetMap).</li>
+      <li>Setores de risco e manchas de cheias: Serviço Geológico do Brasil, <a href="https://rigeo.sgb.gov.br/" target="_blank" rel="noopener">RIGeo</a>.</li>
+      <li>Contornos do globo: Natural Earth, via world-atlas.</li>
+    </ul>
+    <p class="note">Feito por Thais Adeodato, no mesmo formato do Camadas São Paulo.</p>
+  </article>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://unpkg.com/deck.gl@8.9.36/dist.min.js"></script>
+<script>
+(function(){
+const Z=14, NT=256*2**Z;
+let CITIES=[];
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt=(v,d=1)=>v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const int=v=>v.toLocaleString('pt-BR');
+const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isDark=()=>{const t=document.documentElement.getAttribute('data-theme'); return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;};
+function rgb(c){ const x=document.createElement('canvas').getContext('2d'); x.fillStyle=c; const s=x.fillStyle;
+  if(s[0]==='#') return [parseInt(s.slice(1,3),16),parseInt(s.slice(3,5),16),parseInt(s.slice(5,7),16)];
+  const m=s.match(/[\d.]+/g); return m?m.slice(0,3).map(Number):[128,128,128]; }
+function esc(s){ return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function b64bytes(s){ const b=atob(s), u=new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u; }
+function img(b64,type){ return new Promise(r=>{ const i=new Image(); i.onload=()=>r(i); i.src='data:'+type+';base64,'+b64; }); }
+function pxData(i){ const c=document.createElement('canvas'); c.width=i.width; c.height=i.height; const x=c.getContext('2d',{willReadFrequently:true}); x.drawImage(i,0,0); return x.getImageData(0,0,i.width,i.height).data; }
+
+/* ---------- estado da cidade ---------- */
+let cityId='pedreiras', D=null, K=null, GW=0, GH=0, X0=0, Y0=0, R0=0, HMIN=4, HMAX=12, LMIN=0, LMAX=8, BOUNDS=null;
+let YEARS=[], NY=0, EVENTS=[];
+let level=0, mode='water', picked=null, deckgl=null, view=null, targetView=null;
+let BLD=[], thrG=null, rivG=null, hillPx=null, groundImg=null, waterImg=null, roads=[], sects=[], pois=[], labels=[], obs=[];
+let schools=[], hosps=[];
+const cache={};
+const lon=px=>(px+X0*256)/NT*360-180;
+const lat=py=>{const n=Math.PI-2*Math.PI*(py+Y0*256)/NT; return 180/Math.PI*Math.atan(Math.sinh(n));};
+const ll=p=>[lon(p[0]),lat(p[1])];
+const gH=L=>L+R0;
+const freq=H=>YEARS.filter(y=>D.annmax[y]>=H-1e-9);
+const covIdx=()=>Math.max(0,Math.min(150,Math.round(level*10)));
+
+async function loadBuildings(){
+  const gz=b64bytes(D.bld);
+  const buf=await new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+  const hdr=new Uint32Array(buf,0,2), nb=hdr[0], nv=hdr[1];
+  const v=new Uint16Array(buf.slice(8+nb,8+nb+nv*2));
+  const thr=b64bytes(D.bthr), area=new Uint16Array(b64bytes(D.barea).buffer);
+  const out=new Array(nb); let i=0,k=0;
+  while(i<v.length){ const n=v[i], ring=new Array(n);
+    for(let j=0;j<n;j++){ ring[j]=[lon(v[i+1+2*j]/16),lat(v[i+2+2*j]/16)]; }
+    const a=area[k], h=a<120?3.2:a<300?4.2:a<800?6:8;
+    out[k]={polygon:ring,t:thr[k]===255?99:thr[k]/10,a,h,i:k};
+    i+=1+2*n; k++; }
+  return out;
+}
+
+const fileCache={};
+async function fetchCity(id){
+  if(fileCache[id]) return fileCache[id];
+  const meta=CITIES.find(c=>c.id===id); const r=await fetch(meta.file); if(!r.ok) throw new Error('HTTP '+r.status);
+  fileCache[id]=await r.json(); return fileCache[id];
+}
+async function loadCity(id){
+  const data=await fetchCity(id);
+  cityId=id; D=data; K=D.cfg;
+  GW=D.GW; GH=D.GH; X0=D.X0; Y0=D.Y0; R0=D.R0; HMIN=K.hmin; HMAX=K.hmax; LMIN=HMIN-R0; LMAX=HMAX-R0;
+  const B=D.bounds; BOUNDS=[B[0],B[3],B[2],B[1]];
+  YEARS=Object.keys(D.annmax).map(Number); NY=YEARS.length; EVENTS=K.events;
+  if(!cache[id]){
+    const [hill,enc,riv]=await Promise.all([img(D.hill,'image/jpeg'),img(D.enc,'image/png'),img(D.riv,'image/png')]);
+    const e=pxData(enc), r=pxData(riv), n=GW*GH, thr=new Uint8Array(n), rv=new Uint8Array(n);
+    for(let i=0;i<n;i++){ thr[i]=e[4*i]; rv[i]=r[4*i]>127?1:0; }
+    let bld=[]; try{ bld=await loadBuildings(); }catch(err){ console.error('buildings',err); }
+    cache[id]={hillPx:pxData(hill),thr,rv,bld,
+      roads:D.roads.map(r=>({k:r.k,path:r.p.map(ll)})),
+      sects:D.sect.map(s=>({...s,flood:/nunda/i.test(s.tipo),polys:s.rings.map(r=>r.map(ll))})),
+      pois:D.pois.filter(p=>p.a!=='clinic').map(p=>({...p,pos:ll([p.x,p.y])})),
+      labels:(D.labels||[]).map(l=>({...l,p:ll([l.x,l.y])})),
+      obs:Object.entries(D.obs||{}).flatMap(([yr,rings])=>rings.map(r=>({yr,path:r.map(ll)})))};
+  }
+  const c=cache[id];
+  hillPx=c.hillPx; thrG=c.thr; rivG=c.rv; BLD=c.bld; roads=c.roads; sects=c.sects; pois=c.pois; labels=c.labels; obs=c.obs;
+  schools=pois.filter(p=>p.a==='school'); hosps=pois.filter(p=>p.a==='hospital');
+  picked=null; document.getElementById('card').hidden=true;
+  document.getElementById('riverName').textContent=K.river;
+  document.getElementById('tagline').textContent=K.tag;
+  document.getElementById('map').setAttribute('aria-label','Mapa 3D das construções de '+K.name+' e da água do rio '+K.river);
+  aboutCity();
+  hc.setAttribute('aria-valuemin',HMIN); hc.setAttribute('aria-valuemax',HMAX); hc.setAttribute('aria-label','Régua do rio '+K.river+' em '+K.gauge+': arraste para escolher o nível');
+  const tk=[]; for(let h=HMIN;h<=HMAX;h++) tk.push(`<span>${h}${h===HMIN||h===HMAX?' m':''}</span>`); document.getElementById('ticks').innerHTML=tk.join('');
+  evBox.innerHTML=EVENTS.map((e,i)=>`<button type="button" class="ev ${e.c||''}" data-i="${i}" style="left:${((e.h-HMIN)/(HMAX-HMIN)*100).toFixed(2)}%" aria-label="Ir para ${fmt(e.h,2)} m na régua">${e.t}</button>`).join('');
+  evBox.querySelectorAll('.ev').forEach(b=>b.addEventListener('click',()=>{ stop(); setLevel(EVENTS[+b.dataset.i].h-R0,true); }));
+  buildGround();
+  setLevel(K.start-R0,true);
+  const mob=innerWidth<=820;
+  const v={longitude:mob&&K.lonM?K.lonM:D.view.longitude,latitude:D.view.latitude,zoom:mob?K.zoomM:K.zoom,pitch:mob?40:52,bearing:-18};
+  targetView=v;
+}
+
+function buildGround(){
+  const lo=rgb(css('--t-lo')), hi=rgb(css('--t-hi')), c=document.createElement('canvas'); c.width=GW; c.height=GH;
+  const x=c.getContext('2d'), im=x.createImageData(GW,GH);
+  for(let i=0;i<GW*GH;i++){ const t=.5+.5*Math.pow(hillPx[4*i]/255,.9); const o=4*i;
+    im.data[o]=lo[0]+(hi[0]-lo[0])*t; im.data[o+1]=lo[1]+(hi[1]-lo[1])*t; im.data[o+2]=lo[2]+(hi[2]-lo[2])*t; im.data[o+3]=255; }
+  x.putImageData(im,0,0); groundImg=c;
+}
+let C={};
+function readTheme(){ C={dark:isDark()}; for(const k of ['block','water','road','hit','ink','sgb','slide','accent','obs']) C[k]=rgb(css('--'+k)); }
+const waterC=document.createElement('canvas');
+let waterVer=0;
+async function buildWater(){
+  if(waterC.width!==GW||waterC.height!==GH){ waterC.width=GW; waterC.height=GH; }
+  const L=Math.round(level*10), w=C.water, x=waterC.getContext('2d'), im=x.createImageData(GW,GH), a=mode==='water'?150:70;
+  for(let i=0;i<GW*GH;i++){ const o=4*i, r=rivG[i];
+    im.data[o]=w[0]; im.data[o+1]=w[1]; im.data[o+2]=w[2]; im.data[o+3]=r?235:(thrG[i]<=L?a:0); }
+  x.putImageData(im,0,0);
+  const ver=++waterVer, bmp=window.createImageBitmap?await createImageBitmap(waterC):waterC.toDataURL();
+  if(ver===waterVer){ const prev=waterImg; waterImg={img:bmp,city:cityId}; if(prev&&prev.img.close) setTimeout(()=>prev.img.close(),1500); }
+  else if(bmp.close) bmp.close();
+}
+
+const RAMP=[[4,[214,58,46]],[6,[240,110,48]],[7.5,[244,160,52]],[9,[236,200,80]],[10.5,[200,214,150]],[12,[170,196,206]]];
+function rampAt(l){ if(l>=99) return null; const t=gH(l); if(t>12) return null; if(t<4) return RAMP[0][1]; for(let i=1;i<RAMP.length;i++){ if(t<=RAMP[i][0]){ const [a,ca]=RAMP[i-1],[b,cb]=RAMP[i], k=(t-a)/(b-a); return ca.map((v,j)=>Math.round(v+(cb[j]-v)*k)); } } return null; }
+
+/* cores do tema em cache (C): mexer na régua só recalcula a cor de cada construção, sem ler o CSS de novo */
+function bldLayer(id,color,trig,pick){
+  return new deck.SolidPolygonLayer({id:id+'-'+cityId,data:BLD,getPolygon:d=>d.polygon,extruded:true,pickable:pick,autoHighlight:pick,highlightColor:[255,255,255,110],
+    getElevation:d=>d.h,getFillColor:color,material:{ambient:.5,diffuse:.6,shininess:12,specularColor:[30,28,24]},
+    updateTriggers:{getFillColor:[C.dark,trig]}}); }
+
+function layers(){
+  const dark=C.dark, road=C.road, hit=C.hit, ink=C.ink, sgb=C.sgb, slide=C.slide;
+  const L=[];
+  L.push(new deck.BitmapLayer({id:'ground-'+cityId,image:groundImg,bounds:BOUNDS,updateTriggers:{image:[dark]}}));
+  L.push(new deck.PathLayer({id:'roads-'+cityId,data:roads,getPath:d=>d.path,getColor:[...road,dark?120:150],widthUnits:'meters',
+    getWidth:d=>d.k==='primary'?9:d.k==='tertiary'?7:5,widthMinPixels:.6,capRounded:true,jointRounded:true,updateTriggers:{getColor:[dark]}}));
+  if(waterImg&&waterImg.city===cityId) L.push(new deck.BitmapLayer({id:'water-'+cityId,image:waterImg.img,bounds:BOUNDS}));
+  if(mode==='sgb'){
+    L.push(new deck.PolygonLayer({id:'sgb-'+cityId,data:sects.flatMap(s=>s.polys.map(p=>({s,p}))),getPolygon:d=>d.p,pickable:true,
+      getFillColor:d=>[...(d.s.flood?sgb:slide),60],getLineColor:d=>[...(d.s.flood?sgb:slide),255],lineWidthUnits:'pixels',getLineWidth:2.5,
+      onClick:({object})=>{ if(object) showSector(object.s); }, updateTriggers:{getFillColor:[dark],getLineColor:[dark]}}));
+    if(obs.length) L.push(new deck.PathLayer({id:'obs-'+cityId,data:obs.filter(o=>o.yr==='1997'),getPath:d=>d.path,getColor:[...C.obs,255],widthUnits:'pixels',getWidth:2.5,
+      extensions:deck.PathStyleExtension?[new deck.PathStyleExtension({dash:true})]:[],getDashArray:[5,3],updateTriggers:{getColor:[dark]}}));
+  }
+  const pick=mode!=='sgb';
+  if(mode==='reach'){
+    const blk=[...C.block,255], RC=new Map(); L.push(bldLayer('bld-reach',d=>{ let c=RC.get(d.t); if(!c){ const r=rampAt(d.t); c=r?[...r,255]:blk; RC.set(d.t,c); } return c; },0,true));
+  } else {
+    const wet=[...C.water,255], dry=[...C.block,255], lv=level+.001;
+    L.push(bldLayer('bld',d=>d.t<=lv?wet:dry,Math.round(level*20),pick));
+  }
+  if(picked) L.push(new deck.SolidPolygonLayer({id:'picked',data:[picked],getPolygon:d=>d.polygon,extruded:true,getElevation:d=>d.h+.3,getFillColor:[255,255,255,255],material:{ambient:.8,diffuse:.4}}));
+  L.push(new deck.ScatterplotLayer({id:'poi-'+cityId,data:pois,getPosition:d=>[...d.pos,14],radiusUnits:'pixels',getRadius:d=>d.a==='hospital'?8:5.5,stroked:true,
+    getFillColor:d=>d.s<=level?[...hit,255]:[...ink,230],getLineColor:dark?[0,0,0,200]:[255,255,255,255],lineWidthUnits:'pixels',getLineWidth:1.6,pickable:true,
+    billboard:true,updateTriggers:{getFillColor:[Math.round(level*20),dark]}}));
+  L.push(new deck.TextLayer({id:'lab-'+cityId,data:labels,getPosition:d=>[...d.p,40],getText:d=>d.t,getSize:d=>d.river?15:13,
+    fontFamily:'-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif',fontWeight:700,
+    getColor:d=>d.river?C.accent.concat(255):ink.concat(235),characterSet:'auto',
+    fontSettings:{sdf:true,fontSize:48,buffer:6},outlineWidth:3,outlineColor:dark?[11,11,13,230]:[245,245,247,230],billboard:true,
+    updateTriggers:{getColor:[dark]}}));
+  return L;
+}
+function lighting(){ const dark=isDark();
+  const amb=new deck.AmbientLight({color:dark?[200,205,225]:[255,248,238],intensity:dark?.95:1.0});
+  const sun=new deck.DirectionalLight({color:dark?[255,226,196]:[255,236,212],intensity:dark?1.2:1.45,direction:[-3,-6,-4]});
+  const fill=new deck.DirectionalLight({color:[200,214,240],intensity:.22,direction:[4,3,-2]});
+  return [new deck.LightingEffect({amb,sun,fill})]; }
+function refresh(){ if(deckgl) deckgl.setProps({layers:layers()}); }
+
+/* ---------- painel ---------- */
+function stats(){
+  const i=covIdx(), hs=schools.filter(p=>p.s<=level).length, hh=hosps.filter(p=>p.s<=level).length;
+  let nb=0; for(const b of BLD) if(b.t<=level+1e-6) nb++;
+  return {i,nb,hs,hh,urb:D.curve.urb[i],road:D.curve.road[i],fy:freq(gH(level))};
+}
+function wavg(list,i){ let a=0,w=0; for(const s of list){ a+=s.cov[i]*s.area_km2; w+=s.area_km2; } return w?a/w:0; }
+function renderLegend(){
+  const s=stats(), el=document.getElementById('legend'); let h='';
+  if(mode==='water'){
+    const last=s.fy.length?Math.max(...s.fy):null;
+    const hospRow=hosps.length===1?`<div class="row"><i style="background:var(--hit)"></i><span>${esc(hosps[0].n.replace(' de Pedreiras',''))}</span><em class="${s.hh?'alert':''}">${s.hh?'Atingido':'Seco'}</em></div>`
+      :`<div class="row"><i style="background:var(--hit)"></i><span>Hospitais</span><em class="${s.hh?'alert':''}">${s.hh} de ${hosps.length}</em></div>`;
+    h+=`<h2>Régua a ${fmt(gH(level),2)} m</h2>
+      <div class="big"><div><b>${int(s.nb)}</b><span>construções alcançadas</span></div><div><b>${s.fy.length} <small style="font-size:14px;color:var(--muted)">de ${NY}</small></b><span>anos em que o rio chegou aqui</span></div></div>
+      <div class="row"><i class="sq" style="background:var(--accent)"></i><span>Última vez</span><em>${last?last+' ('+fmt(D.annmax[last],2)+' m)':'nunca medido'}</em></div>
+      <h3>O que a água alcança</h3>
+      <div class="row"><i style="background:var(--hit)"></i><span>Escolas</span><em class="${s.hs?'alert':''}">${s.hs} de ${schools.length}</em></div>
+      ${hospRow}
+      <div class="row"><i class="sq" style="background:var(--road)"></i><span>Ruas alagadas</span><em>${fmt(s.road,0)} de ${fmt(D.curve.road_total,0)} km</em></div>
+      <div class="row"><i class="sq" style="background:var(--water)"></i><span>Área urbana sob água</span><em>${fmt(s.urb,1)} km²</em></div>
+      <p class="hint">${K.hint}</p>`;
+  } else if(mode==='reach'){
+    h+=`<h2>Quando a água chega</h2>
+      <div class="ramp" style="background:linear-gradient(90deg,${RAMP.map(([v,c])=>`rgb(${c}) ${((v-4)/8*100).toFixed(1)}%`).join(',')})"></div>
+      <div class="ramp-lab"><span>4 m</span><span>6</span><span>8</span><span>10</span><span>12 m</span></div>
+      <p class="hint">Cor de cada construção: o nível da régua em que a água chega até ela. Cinza: acima de 12 m ou fora do alcance da água.</p>
+      <h3>Construções por faixa da régua</h3>
+      ${[[0,6,'Até 6 m'],[6,7.5,'6 a 7,5 m'],[7.5,9,'7,5 a 9 m'],[9,10.5,'9 a 10,5 m'],[10.5,12,'10,5 a 12 m']].map(([a,b,lab])=>{ let n=0; for(const x of BLD){ const hh=gH(x.t); if(x.t<99&&hh>a&&hh<=b) n++; } const c=rampAt((Math.max(a,4)+b)/2-R0); return `<div class="row"><i style="background:rgb(${c})"></i><span>${lab}</span><em>${int(n)}</em></div>`; }).join('')}
+      <div class="row"><i style="background:var(--block);box-shadow:inset 0 0 0 1px var(--line)"></i><span>Acima de 12 m</span><em>${int(BLD.filter(x=>x.t>=99||gH(x.t)>12).length)}</em></div>`;
+  } else {
+    const fl=sects.filter(x=>x.flood), sl=sects.filter(x=>!x.flood);
+    h+=`<h2>Dados oficiais da SGB</h2>
+      <p class="hint" style="margin-top:0">${K.sgbNote}</p>
+      <h3>Parte coberta com a régua a ${fmt(gH(level),2)} m</h3>`;
+    if(K.sectList){
+      h+=fl.map(x=>`<div class="row"><i class="ring" style="--c:var(--sgb)"></i><span>Inundação · ${esc(x.mun==='Pedreiras'?'Pedreiras':'Trizidela')}</span><em>${Math.round(x.cov[s.i]*100)}%</em></div>`).join('')
+        + sl.map(x=>`<div class="row"><i class="ring" style="--c:var(--slide)"></i><span>Deslizamento · ${esc(x.local)}</span><em>${Math.round(x.cov[s.i]*100)}%</em></div>`).join('');
+    } else {
+      h+=`<div class="row"><i class="ring" style="--c:var(--sgb)"></i><span>${fl.length} setores de inundação</span><em>${Math.round(wavg(fl,s.i)*100)}%</em></div>
+        <div class="row"><i class="ring" style="--c:var(--slide)"></i><span>${sl.length} setores de deslizamento</span><em>${Math.round(wavg(sl,s.i)*100)}%</em></div>
+        <div class="row"><i style="background:none;box-shadow:none;width:auto"><span class="obsline"></span></i><span>Mancha real de 1997 (7,99 m)</span><em>${Math.round(D.fit['1997'].recall*100)}% acertada</em></div>`;
+    }
+    h+=`<p class="hint">O modelo não usa esses desenhos. A coincidência com as áreas de inundação, e a distância das de deslizamento, é o teste de que ele funciona.</p>`;
+  }
+  el.innerHTML=h;
+}
+function updateTop(){
+  const s=stats();
+  document.getElementById('lvBig').innerHTML=fmt(gH(level),2)+'<small>m</small>';
+  document.getElementById('lvSub').textContent='na régua de '+K.gauge+' · '+int(s.nb)+' construções';
+}
+const X='<button class="close" id="cardClose" type="button" aria-label="Fechar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>';
+function showBuilding(b,noRefresh){
+  picked=b; const card=document.getElementById('card');
+  const out=b.t>=99||gH(b.t)>16, reach=out?'—':fmt(gH(b.t),1);
+  const c=rampAt(b.t);
+  card.innerHTML=X+`<div class="yr">${reach}<small>${out?'':'m'}</small></div>
+    <div class="per" style="--pc:${c?`rgb(${c})`:'var(--block)'}">${out?'Fora do alcance das cheias medidas':b.t<=level?'Alcançada neste nível':'Seca neste nível'}</div>
+    <dl><dt>A água chega com a régua a</dt><dd>${out?'mais de 16 m':fmt(gH(b.t),1)+' m'}</dd><dt>Anos em que isso aconteceu</dt><dd>${out?'nenhum':freq(gH(b.t)).length+' de '+NY}</dd><dt>Área do contorno</dt><dd>${int(b.a)} m²</dd><dt>Altura no mapa</dt><dd>${fmt(b.h)} m (estimada)</dd></dl>
+    <p class="hint" style="margin:10px 0 0">Contorno detectado por IA em imagem de satélite (Overture Maps).</p>`;
+  card.hidden=false; document.getElementById('cardClose').onclick=closeCard; if(!noRefresh) refresh();
+}
+function showPoi(p){
+  picked=null; const card=document.getElementById('card');
+  card.innerHTML=X+`<div class="dname">${esc(p.n)}</div>
+    <div class="per" style="--pc:${p.s<=level?'var(--hit)':'var(--ink)'}">${p.a==='hospital'?'Hospital':'Escola'} · ${p.s<=level?'atingido neste nível':'seco neste nível'}</div>
+    <dl><dt>A água chega com a régua a</dt><dd>${p.s>=25?'mais de 25 m':fmt(gH(p.s),1)+' m'}</dd><dt>Anos em que isso aconteceu</dt><dd>${p.s>=25?'nenhum':freq(gH(p.s)).length+' de '+NY}</dd><dt>Fonte</dt><dd>${esc(K.poiSource)}</dd></dl>`;
+  card.hidden=false; document.getElementById('cardClose').onclick=closeCard; refresh();
+}
+function showSector(s){
+  picked=null; const card=document.getElementById('card'), i=covIdx();
+  const dup=(K.dup||[]).includes(s.id);
+  card.innerHTML=X+`<div class="dname">${esc(s.mun)}</div>
+    <div class="per" style="--pc:var(${s.flood?'--sgb':'--slide'})">${s.flood?'Inundação':'Deslizamento'} · risco ${esc(s.risco)}</div>
+    <h3 style="margin:0 0 10px;font-size:15px;font-weight:600">${esc(s.local)}</h3>
+    <dl><dt>${K.sectList?'Moradias':'Edificações'}</dt><dd>${int(s.morad)}</dd><dt>Pessoas</dt><dd>${dup?'12.000 ou 1.200':int(s.pess)}</dd><dt>Área</dt><dd>${fmt(s.area_km2,2)} km²</dd><dt>Coberto com a régua a ${fmt(gH(level),2)} m</dt><dd>${Math.round(s.cov[i]*100)}%</dd></dl>
+    <p>${esc(s.desc)}</p>
+    ${dup?`<div class="tb">O arquivo original estima 12.000 pessoas. A versão atualizada diz 1.200, para as mesmas 3.000 moradias. O número coerente é 12.000.</div>`:''}
+    ${s.interv?`<p class="hint" style="margin:10px 0 0">Intervenção sugerida: ${esc(s.interv)}</p>`:''}`;
+  card.hidden=false; document.getElementById('cardClose').onclick=closeCard;
+}
+function closeCard(){ document.getElementById('card').hidden=true; picked=null; refresh(); }
+
+/* ---------- régua / histograma ---------- */
+const hc=document.getElementById('hist'), evBox=document.getElementById('events');
+function drawHist(){
+  const r=hc.getBoundingClientRect(), dpr=Math.min(2,devicePixelRatio||1); if(!r.width) return;
+  hc.width=Math.round(r.width*dpr); hc.height=Math.round(r.height*dpr);
+  const x=hc.getContext('2d'); x.scale(dpr,dpr); const W=r.width, H=r.height;
+  const n=Math.round((HMAX-HMIN)/0.2), hist=new Array(n).fill(0), bw=W/n;
+  for(const b of BLD){ if(b.t>=99) continue; const k=Math.ceil((gH(b.t)-HMIN)/0.2)-1; if(k>=0&&k<n) hist[k]++; }
+  const max=Math.max(1,...hist);
+  const acc=css('--water'), off=css('--fill-hover')||'rgba(118,118,128,.2)', ink=css('--ink');
+  for(let i=0;i<n;i++){ const v=hist[i], h=Math.max(1.5,Math.sqrt(v/max)*(H-10)); const hv=HMIN+(i+1)*0.2;
+    x.fillStyle=hv<=gH(level)+1e-6?acc:off; const w=Math.max(1,bw-1.5); x.beginPath(); x.roundRect?x.roundRect(i*bw,H-h,w,h,[2,2,0,0]):x.rect(i*bw,H-h,w,h); x.fill(); }
+  x.fillStyle=css('--muted'); x.globalAlpha=.55; for(const e of EVENTS){ const ex=(e.h-HMIN)/(HMAX-HMIN)*W; x.fillRect(ex-.5,0,1,H); } x.globalAlpha=1;
+  const cx=(level-LMIN)/(LMAX-LMIN)*W; x.fillStyle=ink; x.fillRect(Math.min(W-2,Math.max(0,cx-1)),0,2,H);
+  x.beginPath(); x.arc(Math.min(W-5,Math.max(5,cx)),5,5,0,7); x.fill();
+}
+let raf=0;
+function setLevel(v,exact){
+  const hc0=Math.max(HMIN,Math.min(HMAX,gH(v))), hv=exact?Math.round(hc0*100)/100:Math.round(hc0*20)/20; level=hv-R0;
+  hc.setAttribute('aria-valuenow',hv); hc.setAttribute('aria-valuetext',fmt(hv,2)+' metros na régua');
+  updateTop(); renderLegend(); drawHist();
+  if(picked) showBuilding(picked,true);
+  if(!raf) raf=requestAnimationFrame(async()=>{ raf=0; await buildWater(); refresh(); });
+}
+let drag=false;
+const fromX=e=>{ const r=hc.getBoundingClientRect(); return LMIN+(e.clientX-r.left)/r.width*(LMAX-LMIN); };
+hc.addEventListener('pointerdown',e=>{ drag=true; hc.setPointerCapture(e.pointerId); stop(); setLevel(fromX(e)); });
+hc.addEventListener('pointermove',e=>{ if(drag) setLevel(fromX(e)); });
+hc.addEventListener('pointerup',()=>{ drag=false; });
+hc.addEventListener('keydown',e=>{ const st={ArrowRight:.05,ArrowUp:.05,ArrowLeft:-.05,ArrowDown:-.05,PageUp:1,PageDown:-1}[e.key];
+  if(st){ e.preventDefault(); stop(); setLevel(Math.round((gH(level)+st)*20)/20-R0); } if(e.key==='Home'){ e.preventDefault(); setLevel(LMIN);} if(e.key==='End'){ e.preventDefault(); setLevel(LMAX);} });
+new ResizeObserver(drawHist).observe(hc);
+
+let playing=0; const PLAY='M4.5 2.6v10.8c0 .6.7 1 1.2.7l8.4-5.4a.8.8 0 000-1.4L5.7 1.9c-.5-.3-1.2.1-1.2.7z', PAUSE='M4 2.5h2.6v11H4zM9.4 2.5H12v11H9.4z';
+function stop(){ if(playing){ cancelAnimationFrame(playing); playing=0; document.getElementById('playIco').setAttribute('d',PLAY); } }
+document.getElementById('play').addEventListener('click',()=>{
+  if(playing){ stop(); return; }
+  const top=K.top-R0;
+  if(reduceMotion){ setLevel(top,true); return; }
+  document.getElementById('playIco').setAttribute('d',PAUSE);
+  const t0=performance.now(), from=level>=top-.05?LMIN:level;
+  const step=now=>{ const v=from+(now-t0)/1000*0.7; if(v>=top){ setLevel(top,true); stop(); return; } setLevel(v); playing=requestAnimationFrame(step); };
+  playing=requestAnimationFrame(step);
+});
+
+document.querySelectorAll('.modes button').forEach(b=>b.addEventListener('click',async()=>{
+  mode=b.dataset.mode; document.querySelectorAll('.modes button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  renderLegend(); await buildWater(); refresh(); }));
+const about=document.getElementById('about');
+document.getElementById('aboutBtn').onclick=()=>{ about.hidden=false; document.getElementById('aboutClose').focus(); };
+document.getElementById('aboutBtn2').onclick=()=>{ about.hidden=false; document.getElementById('aboutClose').focus(); };
+document.getElementById('aboutClose').onclick=()=>{ about.hidden=true; };
+about.addEventListener('click',e=>{ if(e.target===about) about.hidden=true; });
+addEventListener('keydown',e=>{ if(e.key==='Escape'){ if(!about.hidden) about.hidden=true; else closeCard(); } });
+function bars(el,rows){ document.getElementById(el).innerHTML=rows.map(([t,v])=>`<div><span>${esc(t)}</span><i style="width:${Math.max(2,v*100)}%"></i><span>${Math.round(v*100)}%</span></div>`).join(''); }
+function aboutCity(){
+  const box=document.getElementById('aboutCity'); box.innerHTML=K.about||''; box.hidden=false;
+  const i=Math.round((K.valLevel-R0)*10), fl=D.sect.filter(s=>/nunda/i.test(s.tipo)), sl=D.sect.filter(s=>!/nunda/i.test(s.tipo));
+  if(!document.getElementById('vbars')) return;
+  if(D.fit&&D.fit['1997']) bars('vbars',[['Mancha real de 1997 · acerto',D.fit['1997'].recall],['Mancha real de 1997 · precisão',D.fit['1997'].precision],['Setores de inundação',wavg(fl,i)],['Setores de deslizamento',wavg(sl,i)]]);
+  else bars('vbars',D.sect.map(s=>[(/nunda/i.test(s.tipo)?'Inundação · '+(s.mun==='Pedreiras'?'Pedreiras':'Trizidela'):'Deslizamento · '+s.local),s.cov[i]]));
+}
+async function retheme(){ readTheme(); if(!D){ return; } buildGround(); await buildWater(); if(deckgl) deckgl.setProps({effects:lighting(),layers:layers()}); drawHist(); renderLegend(); }
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',retheme);
+new MutationObserver(retheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+
+/* ---------- globo ---------- */
+const gc=document.getElementById('globeCanvas'), gx=gc.getContext('2d');
+let deckReady=false, pendingFly=null;
+let WORLD=null, rot=[50,12,0], scaleK=1, autoSpin=true, gwW=0, ghH=0, gR=0, hoverId=null, flying=false;
+const proj=d3.geoOrthographic().clipAngle(90).precision(.4);
+const gpath=d3.geoPath(proj,gx), grat=d3.geoGraticule10();
+function gSize(){
+  const r=gc.getBoundingClientRect(), dpr=Math.min(2,devicePixelRatio||1);
+  gwW=r.width; ghH=r.height; gc.width=Math.round(gwW*dpr); gc.height=Math.round(ghH*dpr); gx.setTransform(dpr,0,0,dpr,0,0);
+  const mob=innerWidth<=820; gR=Math.min(gwW,ghH)*(mob?.42:.36);
+}
+function cityXY(c){ const p=proj([c.lon,c.lat]); const vis=d3.geoDistance([c.lon,c.lat],[-rot[0],-rot[1]])<Math.PI/2-.05; return {p,vis}; }
+function drawGlobe(){
+  if(!WORLD||!gwW) return;
+  const cx=gwW/2, cy=ghH/2+(innerWidth<=820?0:ghH*.02), R=gR*scaleK;
+  proj.translate([cx,cy]).scale(R).rotate(rot);
+  gx.clearRect(0,0,gwW,ghH);
+  const ocA=css('--g-ocean-a'), ocB=css('--g-ocean-b'), land=css('--g-land'), br=css('--g-br'), line=css('--g-line'), acc=css('--accent');
+  // halo
+  const halo=gx.createRadialGradient(cx,cy,R*.9,cx,cy,R*1.25); halo.addColorStop(0,css('--g-halo')); halo.addColorStop(1,'rgba(0,0,0,0)');
+  gx.fillStyle=halo; gx.beginPath(); gx.arc(cx,cy,R*1.25,0,7); gx.fill();
+  const og=gx.createRadialGradient(cx-R*.35,cy-R*.4,R*.1,cx,cy,R); og.addColorStop(0,ocA); og.addColorStop(1,ocB);
+  gx.fillStyle=og; gx.beginPath(); gpath({type:'Sphere'}); gx.fill();
+  gx.strokeStyle=line; gx.lineWidth=.6; gx.beginPath(); gpath(grat); gx.stroke();
+  for(const f of WORLD.features){ gx.beginPath(); gpath(f); gx.fillStyle=f.properties.br?br:land; gx.fill();
+    gx.strokeStyle=f.properties.br?acc:line; gx.lineWidth=f.properties.br?1.2:.5; gx.stroke(); }
+  // sombreamento esférico
+  const sh=gx.createRadialGradient(cx-R*.45,cy-R*.5,R*.15,cx,cy,R*1.02); sh.addColorStop(0,'rgba(255,255,255,.18)'); sh.addColorStop(.6,'rgba(0,0,0,0)'); sh.addColorStop(1,css('--g-shade'));
+  gx.fillStyle=sh; gx.beginPath(); gpath({type:'Sphere'}); gx.fill();
+  // cidades
+  const t=performance.now()/1000;
+  for(const c of CITIES){ const {p,vis}=cityXY(c); if(!vis||!p) continue;
+    const pulse=(((t*0.8+c.lat*0.13)%1)+1)%1, on=hoverId===c.id;
+    gx.strokeStyle=acc; gx.globalAlpha=(1-pulse)*.8; gx.lineWidth=2; gx.beginPath(); gx.arc(p[0],p[1],6+pulse*16,0,7); gx.stroke(); gx.globalAlpha=1;
+    gx.fillStyle=acc; gx.beginPath(); gx.arc(p[0],p[1],on?7:5.5,0,7); gx.fill();
+    gx.strokeStyle=css('--g-ocean-a'); gx.lineWidth=2; gx.stroke();
+    if(scaleK<2){ gx.font='600 13px -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif';
+      const label=c.short, w=gx.measureText(label).width+16, lx=p[0]+12, ly=p[1]-11;
+      gx.fillStyle=css('--panel-solid'); gx.beginPath(); gx.roundRect?gx.roundRect(lx,ly,w,22,11):gx.rect(lx,ly,w,22); gx.fill();
+      gx.fillStyle=css('--ink'); gx.fillText(label,lx+8,ly+15); }
+  }
+}
+let lastT=0;
+function spin(now){
+  if(document.documentElement.dataset.view==='globe'){
+    if(autoSpin&&!flying&&!reduceMotion){ const dt=Math.min(50,now-(lastT||now)); rot[0]+=dt*.004; }
+    drawGlobe();
+  }
+  lastT=now; requestAnimationFrame(spin);
+}
+// arrastar para girar
+let gdrag=null;
+gc.addEventListener('pointerdown',e=>{ if(flying) return; gdrag={x:e.clientX,y:e.clientY,r:[...rot],moved:false}; gc.setPointerCapture(e.pointerId); autoSpin=false; });
+gc.addEventListener('pointermove',e=>{
+  if(gdrag){ const k=90/(gR*scaleK); const dx=e.clientX-gdrag.x, dy=e.clientY-gdrag.y; if(Math.abs(dx)+Math.abs(dy)>3) gdrag.moved=true;
+    rot[0]=gdrag.r[0]+dx*k; rot[1]=Math.max(-70,Math.min(70,gdrag.r[1]-dy*k)); return; }
+  const h=hitCity(e); if((h&&h.id)!==hoverId){ hoverId=h?h.id:null; gc.style.cursor=h?'pointer':'grab'; markRow(); }
+});
+gc.addEventListener('pointerup',e=>{ const d=gdrag; gdrag=null; if(d&&!d.moved){ const h=hitCity(e); if(h) openCity(h.id); } });
+function hitCity(e){ const r=gc.getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top;
+  for(const c of CITIES){ const {p,vis}=cityXY(c); if(vis&&p&&Math.hypot(p[0]-x,p[1]-y)<16) return c; } return null; }
+function markRow(){ document.querySelectorAll('.cityrow').forEach(b=>b.classList.toggle('on',b.dataset.id===hoverId)); }
+new ResizeObserver(()=>{ gSize(); drawGlobe(); }).observe(gc);
+
+function renderList(){
+  document.getElementById('cityList').innerHTML=CITIES.map(c=>`<button type="button" class="cityrow" data-id="${c.id}">
+    <span class="cn">${esc(c.name)}</span><span class="cm">${esc(c.uf)} · rio ${esc(c.river)}</span>
+    <span class="cs">${int(c.nb)} construções · régua desde ${c.since} · maior cheia ${fmt(c.record.h,2)} m (${c.record.y})</span></button>`).join('');
+  document.querySelectorAll('.cityrow').forEach(b=>{
+    b.addEventListener('click',()=>openCity(b.dataset.id));
+    b.addEventListener('mouseenter',()=>{ hoverId=b.dataset.id; }); b.addEventListener('mouseleave',()=>{ hoverId=null; });
+    b.addEventListener('focus',()=>{ hoverId=b.dataset.id; }); });
+  document.getElementById('cityCount').textContent=CITIES.length===1?'1 cidade mapeada':CITIES.length+' cidades mapeadas';
+}
+
+function tween(ms,fn){ return new Promise(res=>{ if(reduceMotion||ms<=0){ fn(1); res(); return; } const t0=performance.now();
+  const st=now=>{ const k=Math.min(1,(now-t0)/ms), e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2; fn(e); if(k<1) requestAnimationFrame(st); else res(); }; requestAnimationFrame(st); }); }
+
+function makeDeck(v){
+  if(deckgl||!window.deck) return;
+  deckgl=new deck.DeckGL({container:'map',initialViewState:{...v,maxPitch:75,minZoom:2,maxZoom:18.5},controller:{inertia:true},effects:lighting(),layers:[],
+    onLoad:()=>{ deckReady=true; },
+    onViewStateChange:({viewState})=>{ view=viewState; }, getTooltip:null,
+    onClick:({object,layer})=>{ if(!object) return; if(layer.id.startsWith('bld')) showBuilding(object); else if(layer.id.startsWith('poi')) showPoi(object); },
+    getCursor:({isHovering,isDragging})=>isDragging?'grabbing':isHovering?'pointer':'grab'});
+}
+/* ---------- abrir cidade / voltar ao globo ---------- */
+async function openCity(id){
+  if(flying) return; flying=true; autoSpin=false;
+  const c=CITIES.find(x=>x.id===id); const r0=[...rot], r1=[-c.lon,-c.lat,0];
+  let dl=r1[0]-r0[0]; dl=((dl+540)%360)-180;
+  const loading=fetchCity(id).catch(err=>err);
+  await tween(900,e=>{ rot=[r0[0]+dl*e, r0[1]+(r1[1]-r0[1])*e, 0]; drawGlobe(); });
+  await tween(700,e=>{ scaleK=1+e*7; drawGlobe(); });
+  document.getElementById('loading').hidden=false; document.getElementById('loading').textContent='carregando '+c.short+'…';
+  const res=await loading;
+  if(res instanceof Error){ document.getElementById('loading').textContent='Não foi possível carregar '+c.short+'. Verifique a conexão e tente de novo.'; await backToGlobe(); flying=false; return; }
+  await loadCity(id);
+  document.documentElement.dataset.view='city';
+  try{ history.replaceState(null,'','#'+id); }catch(e){}
+  await buildWater();
+  const startView={...targetView,zoom:targetView.zoom-3.2,pitch:0,bearing:0};
+  if(!deckgl) makeDeck(startView);
+  deckgl.setProps({initialViewState:{...startView,maxPitch:75,minZoom:9,maxZoom:18.5},effects:lighting(),layers:layers()});
+  document.getElementById('loading').hidden=true;
+  const fly=()=>{ const t=reduceMotion?{}:{transitionDuration:1800,transitionInterpolator:new deck.FlyToInterpolator({speed:1.2})};
+    deckgl.setProps({initialViewState:{...targetView,maxPitch:75,minZoom:9,maxZoom:18.5,...t}}); };
+  const waitFly=(n=0)=>{ if((deckgl.isInitialized||deckReady)&&n>2){ fly(); } else if(n<80){ setTimeout(()=>waitFly(n+1),100); } else fly(); };
+  waitFly();
+  view=targetView; flying=false; scaleK=1;
+}
+async function backToGlobe(){
+  stop(); document.getElementById('card').hidden=true; picked=null;
+  document.documentElement.dataset.view='globe'; document.getElementById('aboutCity').hidden=true;
+  try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){}
+  scaleK=8; await tween(800,e=>{ scaleK=8-7*e; drawGlobe(); }); scaleK=1; autoSpin=true;
+}
+document.getElementById('globeBtn').addEventListener('click',backToGlobe);
+
+/* ---------- início ---------- */
+(async()=>{
+  readTheme(); gSize();
+  try{
+    const [w,cs]=await Promise.all([fetch('data/world.json').then(r=>r.json()),fetch('data/cities.json').then(r=>r.json())]);
+    WORLD=w; CITIES=cs;
+  }catch(e){ document.getElementById('cityList').innerHTML='<p class="hint">Não foi possível carregar a lista de cidades. Recarregue a página.</p>'; }
+  renderList(); document.getElementById('loading').hidden=true;
+  makeDeck({longitude:-45,latitude:-12,zoom:3,pitch:0,bearing:0});
+  requestAnimationFrame(spin);
+  const start=(location.hash||'').replace('#','');
+  if(CITIES.find(c=>c.id===start)){ const c=CITIES.find(x=>x.id===start); rot=[-c.lon,-c.lat,0]; openCity(start); }
+})();
+})();
+
+</script>
+
+</body>
+</html>
