@@ -24,4 +24,5 @@ Prazo de referência: envio da candidatura ao AISS (Erasmus Mundus) até ~10/12/
 - [ ] Scripts com caminhos relativos e um `config` por cidade.
 - [ ] Melhorar o contorno do Rio Doce (ilhas) — possível uso da hidrografia do grupo do Ifes (SBRH 2021), com citação.
 - [ ] Usar a atualização da setorização da SGB de Colatina (2025).
-- [ ] Publicar no GitHub Pages quando o repositório ficar público.
+- [x] Publicado no GitHub Pages em 29/10/2026.
+- [ ] Escolher a licença do código (sugestão: MIT) e dos textos/dados derivados (sugestão: CC BY 4.0).

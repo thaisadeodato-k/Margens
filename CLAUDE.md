@@ -9,6 +9,9 @@ Mapas 3D de cheias, construção por construção, com a régua real da ANA. Pá
 (carrega só `site/data/<cidade>.json`). Mesmo sistema visual do projeto Camadas São Paulo
 (thaisadeodato-k/camadas-sp): deck.gl 8.9.36, painéis de vidro em estilo Apple, régua com histograma na base.
 
+Site público no GitHub Pages: `https://thaisadeodato-k.github.io/Margens/` (publica a pasta `site/` a cada push na
+`main`, pelo workflow `.github/workflows/pages.yml`).
+
 Também publicado como página no Claude (artifact) `https://claude.ai/artifact/YHQ1pdLcvfqvb2wTt2wmaf`, com os mesmos
 arquivos de `site/data/`. Para republicar ali, publicar o conteúdo do `<body>` de `site/index.html` (o artifact
 acrescenta o esqueleto `<!doctype>`/`<head>` sozinho) com `files` apontando para `site/data/*.json`.
@@ -21,8 +24,9 @@ Material da candidatura em inglês acadêmico claro. Ser honesta e crítica: apo
 ## Regras
 - **Papel da Thais**: concepção, escolha/auditoria das fontes, método, validação. Programação com assistência de IA.
   Nunca exagerar o papel dela.
-- **Wenzel Nicácio** propôs o caso de Pedreiras; parceria combinada. **Não tornar o repositório nem o site públicos
-  sem o acordo dele.**
+- **Wenzel Nicácio** propôs o caso de Pedreiras; parceria combinada. Sempre creditá-lo pela proposta do caso.
+  Em 29/10/2026 a Thais decidiu tornar o repositório e o site públicos: o estudo usa só dados públicos, nenhum dado
+  dele.
 - Mostrar incerteza: a régua de Pedreiras tem margem de ~1 m; "alcançada" ≠ "invadida".
 - Nunca apresentar o mapa como alerta ou previsão.
 

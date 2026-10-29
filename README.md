@@ -13,7 +13,9 @@ Cidades mapeadas:
 
 ## Como ver
 
-Abra `site/index.html` por um servidor local (os dados são carregados de `site/data/`):
+No navegador: **https://thaisadeodato-k.github.io/Margens/**
+
+Ou localmente: abra `site/index.html` por um servidor local (os dados são carregados de `site/data/`):
 
 ```
 cd site
