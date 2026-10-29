@@ -11,6 +11,9 @@ Ordem de execução para uma cidade:
      (reconstrução morfológica por erosão a partir do rio), resultando em `spill.npy`: para cada pixel, quantos metros
      acima do rio a água precisa subir para chegar ali. Também cobre os setores da SGB e, em Colatina, ajusta o nível
      à mancha real de 1997 (IoU dentro do corredor que a SGB mapeou).
+   - Colatina com o IEMA: `colatina_iema_mosaico.py` (junta os blocos de 2 m e reamostra para z15/z16),
+     `colatina_alturas_iema.py` (altura de cada construção = mediana de MDE − MDT no contorno) e
+     `colatina_modelo_iema_teste.py` (o mesmo modelo no MDT de 2 m; ficou como teste de sensibilidade, ver DECISOES).
    - `*_cotas.py`: lê o CSV do HidroWeb e gera a série diária e os máximos anuais.
 4. **`03_pagina/`** — gera o JSON da cidade usado pelo site: relevo sombreado (JPEG), limiar de cada pixel (PNG 8 bits),
    rio, ruas, escolas/hospitais, setores, curvas (área urbana e ruas por nível), construções (contornos, limiar, área),
@@ -18,7 +21,7 @@ Ordem de execução para uma cidade:
 5. Copiar para `site/data/<cidade>.json` e acrescentar a cidade em `site/data/cities.json`.
 
 **Atenção:** os scripts ainda usam caminhos absolutos da pasta de trabalho do ambiente de nuvem
-(`/root/work`, `/root/col`, `/home/claude/work`). Os intermediários `.npy` não vão para o Git (são grandes e
+(`/root/work`, `/root/col`, `/root/col_iema`, `/home/claude/work`). Os intermediários `.npy` não vão para o Git (são grandes e
 regeráveis). Próximo passo técnico: um único `config` por cidade e caminhos relativos.
 
 Dependências Python: numpy, scipy, scikit-image, geopandas, pyogrio, pyproj, pandas, pillow.

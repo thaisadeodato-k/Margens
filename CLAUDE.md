@@ -29,8 +29,11 @@ Material da candidatura em inglês acadêmico claro. Ser honesta e crítica: apo
 ## Números de referência
 - Pedreiras: R0 = 3,8 m (régua = nível do modelo + R0). Régua 7,45 m (2024/2026) → 1.450 construções; 9,81 m (2009)
   → ~3.680. Setores SGB de inundação 77% cobertos em 9,81 m. Estação 33281000.
-- Colatina: R0 = 2,4 m, ajustado à mancha real de 1997 (7,99 m): acerto 81%, precisão 76%. 7,99 m → 1.440
-  construções; 8,90 m (2013) → ~1.790. 1979 ≈ 11,5 m (estimado). Estação 56994500.
+- Colatina: R0 = −0,6 m (relevo ANADEM, afluentes fora da máscara do rio), ajustado à mancha real de 1997 (7,99 m):
+  acerto 92%, precisão 74%, 80% das construções da mancha alcançadas. 7,99 m → 1.851 construções; 8,90 m (2013) →
+  ~2.370. 1979 ≈ 9,2 m (estimado; relato na imprensa ~9,1 m). Cota de inundação da Defesa Civil 5,80 m (~700
+  construções no modelo: exagera em níveis baixos). Com o MDT de 2 m do IEMA (teste): 1.258 construções em 7,99 m.
+  Altura medida (IEMA MDE − MDT) em 65% das construções. Estação 56994500.
 - Inconsistência da SGB (Pedreiras/Trizidela): 12.000 pessoas no arquivo original × 1.200 no atualizado.
 
 ## Como os dados foram obtidos
@@ -40,5 +43,6 @@ em fatias base64 (< 250 mil caracteres por resposta). Arquivos grandes (ex.: MDT
 baixa no navegador dela para a pasta Downloads, e o Claude busca de lá.
 
 ## Próximo passo
-Ver `docs/PROXIMOS_PASSOS.md`. Em andamento: Colatina com o MDT/MDE de 2 m do IEMA (blocos 32_784, 33_784, 32_785,
-33_785 em `https://one.s3.es.gov.br/pr-geobases-public/MAP_ES_2012_2015/MDT/` e `/MDE/`).
+Ver `docs/PROXIMOS_PASSOS.md`. O IEMA de Colatina (blocos 32_784, 33_784, 32_785, 33_785 em
+`https://one.s3.es.gov.br/pr-geobases-public/MAP_ES_2012_2015/MDT/` e `/MDE/`) já foi incorporado em 29/10/2026.
+A seguir: itens do portfólio AISS (participação, Censo, auditoria das construções, incerteza na página, inglês).

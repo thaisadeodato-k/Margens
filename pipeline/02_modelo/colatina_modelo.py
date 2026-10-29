@@ -51,7 +51,9 @@ for w in ov['wat']:
                 line[rr[ok], cc[ok]] = True
 polys = np.zeros((H, Wd), bool)
 for w in ov['wat']:
-    if w['s'] == 'river' and w['ty'] == 3:
+    # só os polígonos do próprio Rio Doce: os afluentes (Pancas, Santa Maria do Doce) ficam fora da máscara, para que a
+    # água entre neles pelo nível do Doce (remanso) e não pelo leito do afluente
+    if w['s'] == 'river' and w['ty'] == 3 and (w.get('n') or '') == 'Rio Doce':
         polys |= raster_poly(w['g'], (H, Wd))
 lab, n = ndimage.label(polys)
 touch = np.unique(lab[ndimage.binary_dilation(line, iterations=3) & polys])

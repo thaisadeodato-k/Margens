@@ -9,7 +9,7 @@ Cidades mapeadas:
 | Cidade | Rio | Construções | Régua | Calibração |
 |---|---|---|---|---|
 | Pedreiras e Trizidela do Vale (MA) | Mearim | 21.466 | Pedreiras II, 1978–2026 | início dos impactos (6 m) |
-| Colatina (ES) | Doce | 34.334 | Colatina Ponte, 1938–2026 | mancha real da cheia de 1997 (SGB) |
+| Colatina (ES) | Doce | 34.334 | Colatina Ponte, 1938–2026 | mancha real da cheia de 1997 (SGB); altura das construções pelo IEMA |
 
 ## Como ver
 

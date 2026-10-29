@@ -130,6 +130,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
 .ev:hover{background:var(--fill-hover)}
 .ev.onset{background:none;color:var(--muted);font-weight:500}
 .ev .short{display:none}
+.ev.al{transform:translateX(calc(-100% + 12px))}.ev.ar{transform:translateX(-12px)}
 .cityseg{border-radius:999px}
 .cityseg button{padding:5px 12px;border-radius:999px;font-size:12.5px}
 .obsline{display:inline-block;width:14px;height:0;border-top:2px dashed var(--obs);margin-right:2px}
@@ -353,12 +354,12 @@ async function loadBuildings(){
   const buf=await new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
   const hdr=new Uint32Array(buf,0,2), nb=hdr[0], nv=hdr[1];
   const v=new Uint16Array(buf.slice(8+nb,8+nb+nv*2));
-  const thr=b64bytes(D.bthr), area=new Uint16Array(b64bytes(D.barea).buffer);
+  const thr=b64bytes(D.bthr), area=new Uint16Array(b64bytes(D.barea).buffer), bh=D.bh?b64bytes(D.bh):null;
   const out=new Array(nb); let i=0,k=0;
   while(i<v.length){ const n=v[i], ring=new Array(n);
     for(let j=0;j<n;j++){ ring[j]=[lon(v[i+1+2*j]/16),lat(v[i+2+2*j]/16)]; }
-    const a=area[k], h=a<120?3.2:a<300?4.2:a<800?6:8;
-    out[k]={polygon:ring,t:thr[k]===255?99:thr[k]/10,a,h,i:k};
+    const a=area[k], m=bh&&bh[k]?bh[k]/2:0, h=m||(a<120?3.2:a<300?4.2:a<800?6:8);
+    out[k]={polygon:ring,t:thr[k]===255?99:thr[k]/10,a,h,hm:!!m,i:k};
     i+=1+2*n; k++; }
   return out;
 }
@@ -535,7 +536,7 @@ function showBuilding(b,noRefresh){
   const c=rampAt(b.t);
   card.innerHTML=X+`<div class="yr">${reach}<small>${out?'':'m'}</small></div>
     <div class="per" style="--pc:${c?`rgb(${c})`:'var(--block)'}">${out?'Fora do alcance das cheias medidas':b.t<=level?'Alcançada neste nível':'Seca neste nível'}</div>
-    <dl><dt>A água chega com a régua a</dt><dd>${out?'mais de 16 m':fmt(gH(b.t),1)+' m'}</dd><dt>Anos em que isso aconteceu</dt><dd>${out?'nenhum':freq(gH(b.t)).length+' de '+NY}</dd><dt>Área do contorno</dt><dd>${int(b.a)} m²</dd><dt>Altura no mapa</dt><dd>${fmt(b.h)} m (estimada)</dd></dl>
+    <dl><dt>A água chega com a régua a</dt><dd>${out?'mais de 16 m':fmt(gH(b.t),1)+' m'}</dd><dt>Anos em que isso aconteceu</dt><dd>${out?'nenhum':freq(gH(b.t)).length+' de '+NY}</dd><dt>Área do contorno</dt><dd>${int(b.a)} m²</dd><dt>Altura no mapa</dt><dd>${fmt(b.h)} m ${b.hm?'(medida, IEMA 2012–2015)':'(estimada pela área)'}</dd></dl>
     <p class="hint" style="margin:10px 0 0">Contorno detectado por IA em imagem de satélite (Overture Maps).</p>`;
   card.hidden=false; document.getElementById('cardClose').onclick=closeCard; if(!noRefresh) refresh();
 }

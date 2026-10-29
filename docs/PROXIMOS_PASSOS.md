@@ -3,9 +3,13 @@
 Prazo de referência: envio da candidatura ao AISS (Erasmus Mundus) até ~10/12/2026.
 
 ## Em andamento
-- [ ] **Colatina com relevo de 2 m (IEMA)**: a Thais baixa os 4 blocos do MDT e os 4 do MDE (GEOBASES) para Downloads;
-      depois: juntar, recortar, refazer o modelo, recalibrar com 1997 e comparar ANADEM × IEMA.
-- [ ] **Altura real das construções em Colatina**: MDE − MDT dentro de cada contorno.
+- [x] **Colatina com relevo de 2 m (IEMA)**: feito em 29/10. Ficou como teste de sensibilidade (ver METODO e DECISOES).
+- [x] **Altura real das construções em Colatina**: MDE − MDT, 65% das construções.
+- [ ] **Conferir com quem conhece Colatina**: o modelo põe o Hospital Sílvio Avidos e a EEEFM Rubens Rangel alcançados
+      a partir de ~8,1 m, e o Hospital Unimed a ~8,5 m (2013 chegou a 8,90 m). Isso aconteceu em 2013? Bom tema para a
+      conversa com a Defesa Civil ou o grupo do Ifes.
+- [ ] **Níveis baixos em Colatina**: o modelo alcança ~700 construções na cota de inundação (5,80 m). Ver se dá para
+      usar a cota como segunda âncora, ou mostrar na página que abaixo de ~6 m o mapa exagera.
 
 ## Para o portfólio AISS (por prioridade)
 1. [ ] **Participação**: camada "até onde a água chegou" (marcas de moradores, sem nome) + conversas de validação
