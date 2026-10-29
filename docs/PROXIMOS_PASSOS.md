@@ -11,6 +11,13 @@ Prazo de referência: envio da candidatura ao AISS (Erasmus Mundus) até ~10/12/
 - [ ] **Níveis baixos em Colatina**: o modelo alcança ~700 construções na cota de inundação (5,80 m). Ver se dá para
       usar a cota como segunda âncora, ou mostrar na página que abaixo de ~6 m o mapa exagera.
 
+## Em teste
+- [ ] **Régua vertical** (ramo `prototipo-regua-vertical`, também como página privada no Claude
+      `https://claude.ai/artifact/6rPUBYWdxceJ3WoVgyv7sd`): no computador, régua desenhada como a de verdade, faixa de
+      frequência (em quantos anos o rio chegou a cada altura) e marcos (cheias, cotas da Defesa Civil, 1ª escola,
+      1º hospital). No celular continua horizontal. Antes de decidir, mostrar as duas versões para 4–5 pessoas e anotar
+      o que entendem (design participativo).
+
 ## Para o portfólio AISS (por prioridade)
 1. [ ] **Participação**: camada "até onde a água chegou" (marcas de moradores, sem nome) + conversas de validação
        documentadas com o Wenzel (Pedreiras), o grupo do Ifes Colatina e/ou a Defesa Civil.
