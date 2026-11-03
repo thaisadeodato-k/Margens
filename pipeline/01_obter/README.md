@@ -14,6 +14,7 @@ o resultado é guardado numa variável `window.__x` e lido em fatias de ~200–2
 | `anadem_recorte.js` | `https://metadados.snirh.gov.br/geonetwork/srv/por/catalog.search` | Lê o GeoTIFF do ANADEM (COG, 1,6 GB) por pedaços (HTTP Range) e recorta a janela da cidade em cm (uint16, gzip). |
 | `overture_edificacoes.js` | qualquer página com `pmtiles.js` carregado (ex.: thaisadeodato-k.github.io/camadas-sp) | Lê os blocos z14 do `buildings.pmtiles` do Overture, decodifica o MVT e exporta os contornos em coordenadas da grade da cidade. |
 | `overture_camadas.js` | idem | Ruas (`transportation`), rios (`base/water`) e escolas/hospitais (`places`) do Overture. Usado em Colatina quando o Overpass (OSM) estava sobrecarregado. |
+| `wsf_evolution_recorte.js` | qualquer página de `https://download.geoservice.dlr.de/` | Baixa o bloco do WSF Evolution (DLR), decodifica o LZW e recorta a janela da cidade: ano da primeira ocupação de cada pixel (1985–2015). |
 | `osm_overpass.js` | qualquer página | Ruas, rio, escolas e hospital pelo Overpass API (usado em Pedreiras). |
 | `terrarium_srtm.js` | qualquer página | Relevo SRTM (AWS Terrain Tiles). Usado só na primeira versão de Pedreiras; substituído pelo ANADEM. |
 | `sgb_rigeo.js` | `https://rigeo.sgb.gov.br/...` | Lista e baixa os pacotes SIG de um item do RIGeo (SGB) pela API do DSpace. |

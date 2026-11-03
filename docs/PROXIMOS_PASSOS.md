@@ -27,6 +27,13 @@ Prazo de referência: envio da candidatura ao AISS (Erasmus Mundus) até ~10/12/
 4. [ ] **Incerteza e proveniência na página**: faixa de construções pela margem da régua; ficha de fonte por número.
 5. [ ] **Versão em inglês** da página e **estudo de caso de uma página** em inglês acadêmico.
 
+## Camadas cruzadas com as construções
+- [x] **Época de ocupação em Colatina** (WSF Evolution, 1985–2015): feito em 03/11/2026, modo "Ocupação" na página.
+- [ ] Época de ocupação em Pedreiras e Trizidela (bloco `WSFevolution_v1_-46_-6`, conferir no STAC).
+- [ ] Depois de 2015: Google Open Buildings Temporal (2016–2023) ou MapBiomas, se o download voltar.
+- [ ] **Uso de cada construção** pelo CNEFE do Censo 2022 (IBGE): escolas, saúde, templos, comércio, domicílios.
+- [ ] Ano exato pelo cadastro imobiliário da Prefeitura de Colatina (pedido via LAI).
+
 ## Técnico
 - [ ] Scripts com caminhos relativos e um `config` por cidade.
 - [ ] Melhorar o contorno do Rio Doce (ilhas) — possível uso da hidrografia do grupo do Ifes (SBRH 2021), com citação.

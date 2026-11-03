@@ -301,6 +301,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
     <button data-mode="water" aria-pressed="true" type="button">Água</button>
     <button data-mode="reach" aria-pressed="false" type="button">Suscetibilidade</button>
     <button data-mode="sgb" aria-pressed="false" type="button">Dados oficiais</button>
+    <button data-mode="occ" aria-pressed="false" type="button" hidden>Ocupação</button>
   </nav>
 
   <div class="ui timeline glass">
@@ -351,6 +352,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
     <ul>
       <li>Régua e cheias: ANA, <a href="https://www.snirh.gov.br/hidroweb/serieshistoricas" target="_blank" rel="noopener">HidroWeb</a>, estação fluviométrica de cada cidade.</li>
       <li>Relevo: <a href="https://www.ufrgs.br/hge/anadem-modelo-digital-de-terreno-mdt/" target="_blank" rel="noopener">ANADEM v1</a> (ANA e IPH/UFRGS), 30 m.</li>
+      <li>Época de ocupação (Colatina): <a href="https://geoservice.dlr.de/web/maps/eoc:wsfevolution" target="_blank" rel="noopener">World Settlement Footprint Evolution</a> (DLR), 30 m, 1985–2015.</li>
       <li>Construções: <a href="https://overturemaps.org/" target="_blank" rel="noopener">Overture Maps</a>, release 2026-09-23 (Google Open Buildings, Microsoft e OpenStreetMap).</li>
       <li>Setores de risco e manchas de cheias: Serviço Geológico do Brasil, <a href="https://rigeo.sgb.gov.br/" target="_blank" rel="noopener">RIGeo</a>.</li>
       <li>Contornos do globo: Natural Earth, via world-atlas.</li>
@@ -397,12 +399,12 @@ async function loadBuildings(){
   const buf=await new Response(new Blob([gz]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
   const hdr=new Uint32Array(buf,0,2), nb=hdr[0], nv=hdr[1];
   const v=new Uint16Array(buf.slice(8+nb,8+nb+nv*2));
-  const thr=b64bytes(D.bthr), area=new Uint16Array(b64bytes(D.barea).buffer), bh=D.bh?b64bytes(D.bh):null;
+  const thr=b64bytes(D.bthr), area=new Uint16Array(b64bytes(D.barea).buffer), bh=D.bh?b64bytes(D.bh):null, occ=D.bocc?b64bytes(D.bocc):null;
   const out=new Array(nb); let i=0,k=0;
   while(i<v.length){ const n=v[i], ring=new Array(n);
     for(let j=0;j<n;j++){ ring[j]=[lon(v[i+1+2*j]/16),lat(v[i+2+2*j]/16)]; }
     const a=area[k], m=bh&&bh[k]?bh[k]/2:0, h=m||(a<120?3.2:a<300?4.2:a<800?6:8);
-    out[k]={polygon:ring,t:thr[k]===255?99:thr[k]/10,a,h,hm:!!m,i:k};
+    out[k]={polygon:ring,t:thr[k]===255?99:thr[k]/10,a,h,hm:!!m,i:k,o:occ?(occ[k]?occ[k]+1984:0):-1};
     i+=1+2*n; k++; }
   return out;
 }
@@ -439,6 +441,8 @@ async function loadCity(id){
   document.getElementById('tagline').textContent=K.tag;
   document.getElementById('map').setAttribute('aria-label','Mapa 3D das construções de '+K.name+' e da água do rio '+K.river);
   aboutCity();
+  { const ob=document.querySelector('.modes [data-mode="occ"]'); ob.hidden=!D.bocc;
+    if(!D.bocc&&mode==='occ'){ mode='water'; document.querySelectorAll('.modes button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.mode==='water')); } }
   hc.setAttribute('aria-valuemin',HMIN); hc.setAttribute('aria-valuemax',HMAX); hc.setAttribute('aria-label','Régua do rio '+K.river+' em '+K.gauge+': arraste para escolher o nível');
   const tk=[]; for(let h=HMIN;h<=HMAX;h++) tk.push(`<span>${h}${h===HMIN||h===HMAX?' m':''}</span>`); document.getElementById('ticks').innerHTML=tk.join('');
   evBox.innerHTML=EVENTS.map((e,i)=>`<button type="button" class="ev ${e.c||''}" data-i="${i}" style="left:calc(6px + ${((e.h-HMIN)/(HMAX-HMIN)).toFixed(4)} * (100% - 12px))" aria-label="Ir para ${fmt(e.h,2)} m na régua">${e.t}</button>`).join('');
@@ -475,6 +479,9 @@ async function buildWater(){
 const RAMP=[[4,[214,58,46]],[6,[240,110,48]],[7.5,[244,160,52]],[9,[236,200,80]],[10.5,[200,214,150]],[12,[170,196,206]]];
 function rampAt(l){ if(l>=99) return null; const t=gH(l); if(t>12) return null; if(t<4) return RAMP[0][1]; for(let i=1;i<RAMP.length;i++){ if(t<=RAMP[i][0]){ const [a,ca]=RAMP[i-1],[b,cb]=RAMP[i], k=(t-a)/(b-a); return ca.map((v,j)=>Math.round(v+(cb[j]-v)*k)); } } return null; }
 
+/* época de ocupação (WSF Evolution): 1985 = já ocupado no início da série; 0 = não detectado até 2015 */
+const OCC=[['Já ocupado em 1985',1985,1985,[124,77,150]],['1986 a 1997',1986,1997,[42,157,143]],['1998 a 2015',1998,2015,[233,162,59]],['Não detectado até 2015',0,0,null]];
+const occBand=y=>y===1985?0:y>=1986&&y<=1997?1:y>=1998?2:3;
 /* cores do tema em cache (C): mexer na régua só recalcula a cor de cada construção, sem ler o CSS de novo */
 function bldLayer(id,color,trig,pick){
   return new deck.SolidPolygonLayer({id:id+'-'+cityId,data:BLD,getPolygon:d=>d.polygon,extruded:true,pickable:pick,autoHighlight:pick,highlightColor:[255,255,255,110],
@@ -496,7 +503,10 @@ function layers(){
       extensions:deck.PathStyleExtension?[new deck.PathStyleExtension({dash:true})]:[],getDashArray:[5,3],updateTriggers:{getColor:[dark]}}));
   }
   const pick=mode!=='sgb';
-  if(mode==='reach'){
+  if(mode==='occ'){
+    const blk=[...C.block,255], OC=OCC.map(b=>b[3]?[...b[3],255]:blk), lv=level+.001;
+    L.push(bldLayer('bld-occ',d=>{ const c=OC[occBand(d.o)]; return d.t<=lv||c===blk?c:[c[0],c[1],c[2],C.dark?70:90]; },Math.round(level*20),true));
+  } else if(mode==='reach'){
     const blk=[...C.block,255], RC=new Map(); L.push(bldLayer('bld-reach',d=>{ let c=RC.get(d.t); if(!c){ const r=rampAt(d.t); c=r?[...r,255]:blk; RC.set(d.t,c); } return c; },0,true));
   } else {
     const wet=[...C.water,255], dry=[...C.block,255], lv=level+.001;
@@ -550,6 +560,15 @@ function renderLegend(){
       <h3>Construções por faixa da régua</h3>
       ${[[0,6,'Até 6 m'],[6,7.5,'6 a 7,5 m'],[7.5,9,'7,5 a 9 m'],[9,10.5,'9 a 10,5 m'],[10.5,12,'10,5 a 12 m']].map(([a,b,lab])=>{ let n=0; for(const x of BLD){ const hh=gH(x.t); if(x.t<99&&hh>a&&hh<=b) n++; } const c=rampAt((Math.max(a,4)+b)/2-R0); return `<div class="row"><i style="background:rgb(${c})"></i><span>${lab}</span><em>${int(n)}</em></div>`; }).join('')}
       <div class="row"><i style="background:var(--block);box-shadow:inset 0 0 0 1px var(--line)"></i><span>Acima de 12 m</span><em>${int(BLD.filter(x=>x.t>=99||gH(x.t)>12).length)}</em></div>`;
+  } else if(mode==='occ'){
+    const nIn=[0,0,0,0], nAll=[0,0,0,0]; let tIn=0;
+    for(const b of BLD){ const k=occBand(b.o); nAll[k]++; if(b.t<=level+1e-6){ nIn[k]++; tIn++; } }
+    const pc=(n,t)=>t?Math.round(n/t*100)+'%':'—';
+    h+=`<h2>Quando a área foi ocupada</h2>
+      <p class="hint" style="margin-top:0">Com a régua a ${fmt(gH(level),2)} m: ${int(tIn)} construções alcançadas, em cor forte. As outras ficam claras.</p>
+      <div class="row" style="font-size:12px;color:var(--muted)"><i style="background:none;box-shadow:none"></i><span></span><em>alcançadas · cidade</em></div>
+      ${OCC.map((b,k)=>`<div class="row"><i style="background:${b[3]?`rgb(${b[3]})`:'var(--block)'};${b[3]?'':'box-shadow:inset 0 0 0 1px var(--line)'}"></i><span>${b[0]}</span><em>${pc(nIn[k],tIn)} · ${pc(nAll[k],BLD.length)}</em></div>`).join('')}
+      <p class="hint">${esc(K.occ.note)} Fonte: ${esc(K.occ.src)}. Pixels de 30 m: uma casa nova numa quadra antiga aparece com o ano da quadra.</p>`;
   } else {
     const fl=sects.filter(x=>x.flood), sl=sects.filter(x=>!x.flood);
     h+=`<h2>Dados oficiais da SGB</h2>
@@ -579,7 +598,7 @@ function showBuilding(b,noRefresh){
   const c=rampAt(b.t);
   card.innerHTML=X+`<div class="yr">${reach}<small>${out?'':'m'}</small></div>
     <div class="per" style="--pc:${c?`rgb(${c})`:'var(--block)'}">${out?'Fora do alcance das cheias medidas':b.t<=level?'Alcançada neste nível':'Seca neste nível'}</div>
-    <dl><dt>A água chega com a régua a</dt><dd>${out?'mais de 16 m':fmt(gH(b.t),1)+' m'}</dd><dt>Anos em que isso aconteceu</dt><dd>${out?'nenhum':freq(gH(b.t)).length+' de '+NY}</dd><dt>Área do contorno</dt><dd>${int(b.a)} m²</dd><dt>Altura no mapa</dt><dd>${fmt(b.h)} m ${b.hm?'(medida, IEMA 2012–2015)':'(estimada pela área)'}</dd></dl>
+    <dl><dt>A água chega com a régua a</dt><dd>${out?'mais de 16 m':fmt(gH(b.t),1)+' m'}</dd><dt>Anos em que isso aconteceu</dt><dd>${out?'nenhum':freq(gH(b.t)).length+' de '+NY}</dd><dt>Área do contorno</dt><dd>${int(b.a)} m²</dd><dt>Altura no mapa</dt><dd>${fmt(b.h)} m ${b.hm?'(medida, IEMA 2012–2015)':'(estimada pela área)'}</dd>${b.o>=0?`<dt>Área ocupada</dt><dd>${b.o===1985?'em 1985 ou antes':b.o?'desde '+b.o:'não detectada até 2015'}</dd>`:''}</dl>
     <p class="hint" style="margin:10px 0 0">Contorno detectado por IA em imagem de satélite (Overture Maps).</p>`;
   card.hidden=false; document.getElementById('cardClose').onclick=closeCard; if(!noRefresh) refresh();
 }

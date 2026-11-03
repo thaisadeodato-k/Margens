@@ -70,6 +70,28 @@ Máximos anuais da régua, só anos com mais de 300 dias de leitura: Pedreiras 4
   ~280 com 3 m (nível que o rio passa em quase todos os anos). O modelo exagera nas margens em níveis baixos; a
   calibração vale para cheias grandes.
 
+## Época de ocupação (Colatina)
+
+Cruzamento das construções com o WSF Evolution (DLR, 30 m), que dá o ano em que cada pixel foi detectado como área
+construída pela primeira vez, de 1985 a 2015. Script: `pipeline/02_modelo/colatina_ocupacao_wsf.py`.
+
+- Cada construção recebe o ano do pixel do seu centro. Se esse pixel não tem ocupação detectada, recebe o menor ano
+  entre os 8 pixels vizinhos (casa na borda de uma área ocupada). Centro: 25.298 construções; vizinhança: 1.662;
+  sem ano: 7.374 (21%).
+- Alinhamento conferido deslocando o raster um pixel em cada direção: a parte das construções sobre área detectada
+  varia entre 73% e 75%, sem deslocamento que melhore claramente o encaixe.
+- O ano é o da quadra, não o da construção: uma casa nova numa quadra antiga aparece com o ano da quadra.
+
+| Grupo | Construções | Já ocupado em 1985 | 1986–1997 | 1998–2015 | Não detectado até 2015 |
+|---|---|---|---|---|---|
+| Alcançadas na cheia de 1997 (7,99 m) | 1.851 | 62% | 15% | 9% | 13% |
+| Alcançadas na cheia de 2013 (8,90 m) | 2.369 | 63% | 16% | 8% | 14% |
+| Cidade toda | 34.334 | 43% | 23% | 13% | 21% |
+
+Leitura: a área que a água alcança é sobretudo a cidade antiga, ocupada antes de 1985 (62% contra 43% na cidade
+toda). A expansão depois da cheia de 1997 foi principalmente para fora da área alagável; ainda assim, ~170 construções
+dentro da mancha de 1997 estão em áreas ocupadas depois dela (9%), mais parte das 246 sem ano.
+
 ## Limites
 
 - Relevo de 30 m; o ANADEM remove vegetação, não construções. Em Colatina, o relevo de 2 m do IEMA muda o número de construções em ~30% (ver acima).
