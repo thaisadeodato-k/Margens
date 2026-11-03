@@ -29,7 +29,7 @@ Prazo de referência: envio da candidatura ao AISS (Erasmus Mundus) até ~10/12/
 
 ## Camadas cruzadas com as construções
 - [x] **Época de ocupação em Colatina** (WSF Evolution, 1985–2015): feito em 03/11/2026, modo "Ocupação" na página.
-- [ ] Época de ocupação em Pedreiras e Trizidela (bloco `WSFevolution_v1_-46_-6`, conferir no STAC).
+- [x] Época de ocupação em Pedreiras e Trizidela: feito em 03/11/2026.
 - [ ] Depois de 2015: Google Open Buildings Temporal (2016–2023) ou MapBiomas, se o download voltar.
 - [ ] **Uso de cada construção** pelo CNEFE do Censo 2022 (IBGE): escolas, saúde, templos, comércio, domicílios.
 - [ ] Ano exato pelo cadastro imobiliário da Prefeitura de Colatina (pedido via LAI).

@@ -9,9 +9,9 @@ Recortes já levados para a grade de cada cidade (ver `pipeline/01_obter/README.
 - `colatina_alturas_iema.npz` — para cada construção de Colatina (mesma ordem do site): `med` e `p75` de MDE − MDT do
   IEMA dentro do contorno (m) e `npx` (pixels de 2,4 m usados).
 
-- `colatina_wsf_evolution.b64` — recorte do WSF Evolution (gzip + base64 de uint8 389 × 576, valor = ano − 1984, 0 = não
-  detectado). Parâmetros do recorte no início de `pipeline/02_modelo/colatina_ocupacao_wsf.py`.
-- `colatina_ocupacao_wsf.npz` — para cada construção de Colatina (ordem do site): `ano` (0 = sem ano) e `origem`
+- `<cidade>_wsf_evolution.b64` — recorte do WSF Evolution (gzip + base64 de uint8, valor = ano − 1984, 0 = não
+  detectado). Parâmetros de cada recorte em `CFG`, no início de `pipeline/02_modelo/ocupacao_wsf.py`.
+- `<cidade>_ocupacao_wsf.npz` — para cada construção (ordem do site): `ano` (0 = sem ano) e `origem`
   (1 = pixel do centro, 2 = vizinhança, 0 = nenhum).
 
 O MDT/MDE do IEMA (8 blocos, ~400 MB) não vai para o Git: baixar de novo do GEOBASES e rodar

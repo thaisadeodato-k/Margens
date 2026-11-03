@@ -70,17 +70,19 @@ Máximos anuais da régua, só anos com mais de 300 dias de leitura: Pedreiras 4
   ~280 com 3 m (nível que o rio passa em quase todos os anos). O modelo exagera nas margens em níveis baixos; a
   calibração vale para cheias grandes.
 
-## Época de ocupação (Colatina)
+## Época de ocupação
 
 Cruzamento das construções com o WSF Evolution (DLR, 30 m), que dá o ano em que cada pixel foi detectado como área
-construída pela primeira vez, de 1985 a 2015. Script: `pipeline/02_modelo/colatina_ocupacao_wsf.py`.
+construída pela primeira vez, de 1985 a 2015. Script: `pipeline/02_modelo/ocupacao_wsf.py <cidade>`.
 
 - Cada construção recebe o ano do pixel do seu centro. Se esse pixel não tem ocupação detectada, recebe o menor ano
-  entre os 8 pixels vizinhos (casa na borda de uma área ocupada). Centro: 25.298 construções; vizinhança: 1.662;
-  sem ano: 7.374 (21%).
+  entre os 8 pixels vizinhos (casa na borda de uma área ocupada). Colatina: centro 25.298, vizinhança 1.662, sem ano
+  7.374 (21%). Pedreiras: centro 17.634, vizinhança 1.302, sem ano 2.530 (12%).
 - Alinhamento conferido deslocando o raster um pixel em cada direção: a parte das construções sobre área detectada
-  varia entre 73% e 75%, sem deslocamento que melhore claramente o encaixe.
+  varia entre 73% e 75% em Colatina e entre 80% e 84% em Pedreiras, sem deslocamento que melhore claramente o encaixe.
 - O ano é o da quadra, não o da construção: uma casa nova numa quadra antiga aparece com o ano da quadra.
+
+**Colatina**
 
 | Grupo | Construções | Já ocupado em 1985 | 1986–1997 | 1998–2015 | Não detectado até 2015 |
 |---|---|---|---|---|---|
@@ -88,9 +90,22 @@ construída pela primeira vez, de 1985 a 2015. Script: `pipeline/02_modelo/colat
 | Alcançadas na cheia de 2013 (8,90 m) | 2.369 | 63% | 16% | 8% | 14% |
 | Cidade toda | 34.334 | 43% | 23% | 13% | 21% |
 
-Leitura: a área que a água alcança é sobretudo a cidade antiga, ocupada antes de 1985 (62% contra 43% na cidade
+**Pedreiras e Trizidela do Vale**
+
+| Grupo | Construções | Já ocupado em 1985 | 1986–1997 | 1998–2015 | Não detectado até 2015 |
+|---|---|---|---|---|---|
+| Alcançadas nas cheias de 2024 e 2026 (7,45 m) | 1.450 | 64% | 14% | 11% | 10% |
+| Alcançadas na cheia de 2009 (9,81 m) | 3.683 | 71% | 10% | 11% | 8% |
+| Cidade toda | 21.466 | 50% | 15% | 24% | 12% |
+
+Leitura (Colatina): a área que a água alcança é sobretudo a cidade antiga, ocupada antes de 1985 (62% contra 43% na cidade
 toda). A expansão depois da cheia de 1997 foi principalmente para fora da área alagável; ainda assim, ~170 construções
 dentro da mancha de 1997 estão em áreas ocupadas depois dela (9%), mais parte das 246 sem ano.
+
+Leitura (Pedreiras): a cidade cresceu muito de 1998 a 2015 (24% das construções, com picos em 2004–2008 e 2012), mas
+essa expansão foi quase toda para fora da área alagável. Na mancha da régua de 2009 (9,81 m), 71% das construções
+estão na cidade antiga; só 38 estão em áreas ocupadas depois da cheia de 2009 (2010–2015). Entre 2004 e 2008, porém,
+210 construções ocuparam áreas que a cheia de 2009 viria a alcançar.
 
 ## Limites
 

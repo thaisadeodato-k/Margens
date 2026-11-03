@@ -3,7 +3,7 @@
 // Rodar no console de qualquer página de https://download.geoservice.dlr.de/ (mesma origem do arquivo), por exemplo a
 // miniatura do bloco: https://download.geoservice.dlr.de/WSF_EVO/files/WSFevolution_v1_-42_-20/WSFevolution_v1_-42_-20_thumbnail.png
 // Blocos de 2° × 2°, nomeados pelo canto sudoeste (STAC: https://geoservice.dlr.de/eoc/ogc/stac/v1/collections/WSF_Evolution).
-// Colatina = WSFevolution_v1_-42_-20 (1,3 MB). O GeoTIFF é int32, LZW, blocos de 512 × 512, EPSG:4326.
+// Colatina = WSFevolution_v1_-42_-20 (1,3 MB); Pedreiras = WSFevolution_v1_-46_-6 (1,1 MB). O GeoTIFF é int32, LZW, blocos de 512 × 512, EPSG:4326.
 const U = '/WSF_EVO/files/WSFevolution_v1_-42_-20/WSFevolution_v1_-42_-20.tif';               // trocar por cidade
 const BB = { W: -40.71533203125, E: -40.5615234375, N: -19.476950206488418, S: -19.58049347920253 }; // grade da cidade (bounds do site)
 
