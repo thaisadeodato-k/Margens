@@ -25,7 +25,7 @@ img{max-width:100%}
   --shadow:0 0 0 .5px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05),0 18px 44px rgba(0,0,0,.08);
   --haze:rgba(245,245,247,.9); --blur:30px; --r:22px; --sheet:#f2f2f5;
   --t-lo:#b9bcc4; --t-hi:#f4f4f6; --road:#8e8e93; --sgb:#5e5ce6; --slide:#bf5af2; --obs:#ff9f0a;
-  --rio:47,127,216; --rio-a:.13; --g-ocean-a:#f7f8fb; --g-ocean-b:#dde2ea; --g-land:#ffffff; --g-br:#e6efff; --g-line:rgba(60,70,90,.18); --g-shade:rgba(30,40,60,.22); --g-halo:rgba(0,113,227,.10);
+  --rio:47,127,216; --rio-a:.085; --g-ocean-a:#f7f8fb; --g-ocean-b:#dde2ea; --g-land:#ffffff; --g-br:#e6efff; --g-line:rgba(60,70,90,.18); --g-shade:rgba(30,40,60,.22); --g-halo:rgba(0,113,227,.10);
   --f-display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",system-ui,sans-serif;
   --f-body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
 }
@@ -35,14 +35,14 @@ img{max-width:100%}
   --seg-track:rgba(118,118,128,.24); --seg-on:#636366; --seg-shadow:0 3px 8px rgba(0,0,0,.3);
   --fill:rgba(118,118,128,.24); --fill-hover:rgba(118,118,128,.32);
   --shadow:0 0 0 .5px rgba(255,255,255,.08),0 18px 44px rgba(0,0,0,.45); --haze:rgba(0,0,0,.82); --sheet:#141416;
-  --t-lo:#0e0e10; --t-hi:#3a3a3e; --road:#7c7c82; --sgb:#7d7aff; --slide:#da8fff; --obs:#ffb340; --rio:130,175,240; --rio-a:.16; --g-ocean-a:#26282d; --g-ocean-b:#111215; --g-land:#3a3b40; --g-br:#203453; --g-line:rgba(255,255,255,.12); --g-shade:rgba(0,0,0,.55); --g-halo:rgba(41,151,255,.14); color-scheme:dark}}
+  --t-lo:#0e0e10; --t-hi:#3a3a3e; --road:#7c7c82; --sgb:#7d7aff; --slide:#da8fff; --obs:#ffb340; --rio:130,175,240; --rio-a:.075; --g-ocean-a:#26282d; --g-ocean-b:#111215; --g-land:#3a3b40; --g-br:#203453; --g-line:rgba(255,255,255,.12); --g-shade:rgba(0,0,0,.55); --g-halo:rgba(41,151,255,.14); color-scheme:dark}}
 :root[data-theme="dark"]{
   --ground:#0b0b0d; --block:#48484a; --ink:#f5f5f7; --muted:#98989d; --line:rgba(255,255,255,.1);
   --panel:rgba(30,30,32,.62); --panel-solid:rgba(36,36,38,.9); --accent:#2997ff; --water:#3a8ef0; --hit:#ff5b4f;
   --seg-track:rgba(118,118,128,.24); --seg-on:#636366; --seg-shadow:0 3px 8px rgba(0,0,0,.3);
   --fill:rgba(118,118,128,.24); --fill-hover:rgba(118,118,128,.32);
   --shadow:0 0 0 .5px rgba(255,255,255,.08),0 18px 44px rgba(0,0,0,.45); --haze:rgba(0,0,0,.82); --sheet:#141416;
-  --t-lo:#0e0e10; --t-hi:#3a3a3e; --road:#7c7c82; --sgb:#7d7aff; --slide:#da8fff; --obs:#ffb340; --rio:130,175,240; --rio-a:.16; --g-ocean-a:#26282d; --g-ocean-b:#111215; --g-land:#3a3b40; --g-br:#203453; --g-line:rgba(255,255,255,.12); --g-shade:rgba(0,0,0,.55); --g-halo:rgba(41,151,255,.14); color-scheme:dark}
+  --t-lo:#0e0e10; --t-hi:#3a3a3e; --road:#7c7c82; --sgb:#7d7aff; --slide:#da8fff; --obs:#ffb340; --rio:130,175,240; --rio-a:.075; --g-ocean-a:#26282d; --g-ocean-b:#111215; --g-land:#3a3b40; --g-br:#203453; --g-line:rgba(255,255,255,.12); --g-shade:rgba(0,0,0,.55); --g-halo:rgba(41,151,255,.14); color-scheme:dark}
 [hidden]{display:none!important}
 html,body{height:100%}
 body{background:var(--ground);color:var(--ink);font-family:var(--f-body);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:-.01em;overflow:hidden;
@@ -81,6 +81,8 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
 .tools{display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-top:12px;flex-wrap:wrap}
 .pill{padding:7px 14px;border-radius:999px;font-size:13px;font-weight:500}
 .pill:hover{background:var(--panel-solid)}
+.temaBtn{display:inline-flex;align-items:center;justify-content:center;padding:7px 10px;cursor:pointer;color:var(--ink)}
+.temaBtn svg{width:15px;height:15px;display:block}
 
 .legend{top:calc(250px + env(safe-area-inset-top,0px));left:max(24px,env(safe-area-inset-left,0px));width:304px;max-height:calc(100% - 400px);overflow:auto;border-radius:var(--r);padding:16px 16px 14px;scrollbar-width:thin;box-sizing:border-box}
 .legend h2{margin:0 0 8px;padding:0 6px;font-family:var(--f-display);font-size:20px;font-weight:700;letter-spacing:-.02em}
@@ -252,7 +254,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
 .cityrow .cs{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
 .glist .soon{margin:10px 6px 0;padding-top:10px;border-top:.5px solid var(--line);font-size:12.5px;color:var(--muted);line-height:1.45}
 .ghint{left:50%;transform:translateX(-50%);bottom:calc(22px + env(safe-area-inset-bottom,0px));padding:7px 14px;border-radius:999px;font-size:12.5px;color:var(--muted);white-space:nowrap}
-.gtools{top:calc(22px + env(safe-area-inset-top,0px));right:max(24px,env(safe-area-inset-right,0px))}
+.gtools{display:flex;gap:6px;top:calc(22px + env(safe-area-inset-top,0px));right:max(24px,env(safe-area-inset-right,0px))}
 :root[data-view="globe"] .cityui{display:none!important}
 :root[data-view="city"] .globeui{display:none!important}
 .back{display:inline-flex;align-items:center;gap:6px}
@@ -271,7 +273,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
 }
 </style>
 
-<script>document.documentElement.dataset.view="globe";</script>
+<script>document.documentElement.dataset.view="globe";try{const t=localStorage.getItem("tema");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
 <canvas id="rioFundo" class="globeui" aria-hidden="true"></canvas>
 <div id="globe" class="globeui"><canvas id="globeCanvas" role="img" aria-label="Globo terrestre com as cidades mapeadas. Arraste para girar."></canvas></div>
 <header class="ui gbrand globeui">
@@ -283,7 +285,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
     </span></div>
   <p>Cidades construídas na planície de um rio. Escolha uma para ver, construção por construção, até onde a água chega quando o rio sobe.</p>
 </header>
-<div class="ui gtools globeui"><button id="aboutBtn2" class="pill glass" type="button">Sobre e método</button></div>
+<div class="ui gtools globeui"><button class="pill glass temaBtn" type="button"></button><button id="aboutBtn2" class="pill glass" type="button">Sobre e método</button></div>
 <aside class="ui glist glass globeui" aria-label="Cidades mapeadas">
   <h2>Cidades mapeadas</h2>
   <p class="sub" id="cityCount"></p>
@@ -312,6 +314,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
   <span id="lvSub"></span>
   <div class="tools">
     <button id="globeBtn" class="pill glass back" type="button"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 2L3.5 6l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Outras cidades</button>
+    <button class="pill glass temaBtn" type="button"></button>
     <button id="aboutBtn" class="pill glass" type="button">Sobre e método</button>
   </div>
 </div>
@@ -849,6 +852,15 @@ function aboutCity(){
 async function retheme(){ rioSujo=true; readTheme(); if(!D){ return; } buildGround(); await buildWater(); if(deckgl) deckgl.setProps({effects:lighting(),layers:layers()}); drawHist(); renderLegend(); }
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',retheme);
 new MutationObserver(retheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+/* botão de modo claro e escuro: mostra o modo para o qual vai mudar e guarda a escolha */
+const ICONE_LUA='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 10.2A6 6 0 0 1 5.8 2.5a6 6 0 1 0 7.7 7.7z" fill="currentColor"/></svg>';
+const ICONE_SOL='<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+function marcarTema(){ const esc=isDark(), nome=esc?'Mudar para o modo claro':'Mudar para o modo escuro';
+  document.querySelectorAll('.temaBtn').forEach(b=>{ b.innerHTML=esc?ICONE_SOL:ICONE_LUA; b.setAttribute('aria-label',nome); b.title=nome; }); }
+document.querySelectorAll('.temaBtn').forEach(b=>b.addEventListener('click',()=>{ const novo=isDark()?'light':'dark';
+  document.documentElement.setAttribute('data-theme',novo); try{ localStorage.setItem('tema',novo); }catch(e){} marcarTema(); }));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',marcarTema);
+marcarTema();
 
 
 /* ---------- globo ---------- */
@@ -896,33 +908,38 @@ function drawGlobe(){
 /* ---------- fundo: linhas de rio que se agitam com o clique ---------- */
 const rc=document.getElementById('rioFundo'), rx=rc.getContext('2d');
 const ONDA={vel:190,amp:17,k:.042,dura:3.6};
-let rioW=0, rioH=0, rioSujo=true, ondas=[];
-function rioY(i,y0,x,t){ return y0+18*Math.sin(x*.0022+t*.07+i*.04)+5*Math.sin(x*.006+i*.33+t*.32)+3*Math.sin(x*.013-i*.19-t*.46); }
+let rioW=0, rioH=0, rioSujo=true, ondas=[], rioAnt=0, rioDt=16, rioQuadros=0, rioDenso=true;
+function rioY(y0,x,t){ return y0+18*Math.sin(x*.0022+t*.07+y0*.0015)+5*Math.sin(x*.006+y0*.0127+t*.32)+3*Math.sin(x*.013-y0*.0073-t*.46); }
 function drawRio(now){
   if(reduceMotion&&!rioSujo&&!ondas.length) return;
   rioSujo=false;
   if(rioW!==innerWidth||rioH!==innerHeight){ const dpr=Math.min(2,devicePixelRatio||1); rioW=innerWidth; rioH=innerHeight;
     rc.width=Math.round(rioW*dpr); rc.height=Math.round(rioH*dpr); rx.setTransform(dpr,0,0,dpr,0,0); }
-  const t=reduceMotion?0:now/1000, gap=rioW<=820?30:26, passo=14, cor=css('--rio'), a=parseFloat(css('--rio-a'));
+  // se o computador não der conta (média acima de ~35 ms por quadro), as linhas ficam mais espaçadas
+  const dt=Math.min(1000,now-(rioAnt||now)); rioAnt=now;
+  if(dt>0&&dt<250){ rioDt=rioDt*.95+dt*.05; if(++rioQuadros>90&&rioDt>28) rioDenso=false; }
+  const t=reduceMotion?0:now/1000, gap=(rioW<=820?12:10)*(rioDenso?1:1.6), passo=rioDenso?16:24, cor=css('--rio'), a=parseFloat(css('--rio-a'));
   ondas=ondas.filter(o=>(now-o.t0)/1000<ONDA.dura);
   rx.clearRect(0,0,rioW,rioH); rx.lineWidth=1; rx.lineJoin='round';
   const fortes=[new Path2D(),new Path2D(),new Path2D()];
   rx.strokeStyle=`rgba(${cor},${a})`; rx.beginPath();
-  for(let i=-3,n=Math.ceil(rioH/gap)+3;i<=n;i++){
-    const y0=i*gap; let xa=0,ya=0;
+  for(let i=-5,n=Math.ceil(rioH/gap)+5;i<=n;i++){
+    const y0=i*gap;
+    let xa=0,ya=0;
     for(let x=-passo;x<=rioW+passo;x+=passo){
-      let y=rioY(i,y0,x,t), dz=0;
+      let y=rioY(y0,x,t), dz=0;
       for(const o of ondas){ const age=(now-o.t0)/1000, d=Math.hypot(x-o.x-age*16,y0-o.y)-age*ONDA.vel, w=70+age*34;
         dz+=ONDA.amp*Math.exp(-age/1.15)*Math.exp(-(d*d)/(w*w))*Math.sin(d*ONDA.k); }
+      const f=Math.abs(dz)/ONDA.amp;
       y+=dz;
       if(x===-passo) rx.moveTo(x,y); else { rx.lineTo(x,y);
-        const f=Math.abs(dz)/ONDA.amp; if(f>.07) fortes[f>.4?2:f>.2?1:0].moveTo(xa,ya), fortes[f>.4?2:f>.2?1:0].lineTo(x,y); }
+        if(f>.07){ const p=fortes[f>.4?2:f>.2?1:0]; p.moveTo(xa,ya); p.lineTo(x,y); } }
       xa=x; ya=y;
     }
   }
   rx.stroke();
-  // onde a onda passa, a linha fica mais visível
-  fortes.forEach((p,k)=>{ rx.strokeStyle=`rgba(${cor},${Math.min(1,a*(1.5+k))})`; rx.stroke(p); });
+  // onde a água se mexe, a linha fica mais visível
+  fortes.forEach((p,k)=>{ rx.strokeStyle=`rgba(${cor},${Math.min(1,a*(1.6+k*1.3))})`; rx.stroke(p); });
 }
 addEventListener('pointerdown',e=>{
   if(reduceMotion||document.documentElement.dataset.view!=='globe') return;
