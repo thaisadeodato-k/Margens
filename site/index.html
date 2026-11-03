@@ -13,6 +13,9 @@ img{max-width:100%}
 </head>
 <body>
 <title>Margens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&display=swap">
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
 /* Layout: full-bleed 3D city on the floodplain; floating glass panels (summary left, detail card right) and a water-level dock along the bottom.
@@ -27,6 +30,7 @@ img{max-width:100%}
   --t-lo:#b9bcc4; --t-hi:#f4f4f6; --road:#8e8e93; --sgb:#5e5ce6; --slide:#bf5af2; --obs:#ff9f0a;
   --rio:47,127,216; --rio-a:.085; --g-ocean-a:#f7f8fb; --g-ocean-b:#dde2ea; --g-land:#ffffff; --g-br:#e6efff; --g-line:rgba(60,70,90,.18); --g-shade:rgba(30,40,60,.22); --g-halo:rgba(0,113,227,.10);
   --f-display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",system-ui,sans-serif;
+  --f-marca:"Fraunces",Georgia,"Times New Roman",serif;
   --f-body:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
@@ -64,8 +68,9 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
 .seg button[aria-pressed="true"]{background:var(--seg-on);box-shadow:var(--seg-shadow);font-weight:600}
 
 .brand{top:calc(22px + env(safe-area-inset-top,0px));left:max(24px,env(safe-area-inset-left,0px));pointer-events:none}
-.brand h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(40px,5.4vw,72px);line-height:1;letter-spacing:-.035em;text-wrap:balance}
-.brand h1 small{display:block;font-family:var(--f-body);font-size:17px;font-weight:600;letter-spacing:-.01em;color:var(--accent);margin-bottom:6px}
+.brand h1{margin:0;font-family:var(--f-marca);font-weight:500;font-size:clamp(44px,5.4vw,72px);line-height:1;letter-spacing:-.025em;font-optical-sizing:auto;text-wrap:balance}
+.brand h1 small{display:flex;align-items:center;gap:10px;margin-top:8px;font-family:var(--f-body);font-size:15px;line-height:1.2;font-weight:500;letter-spacing:0;color:var(--muted)}
+.brand h1 small::before{content:"";flex:none;width:34px;height:8px;background:var(--accent);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 8'%3E%3Cpath d='M1 4c4-4 6-4 10.700 0s6.600 4 10.700 0 6-4 10.600 0' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 8'%3E%3Cpath d='M1 4c4-4 6-4 10.700 0s6.600 4 10.700 0 6-4 10.600 0' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat}
 .brand .byline{margin:12px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font-size:14px;pointer-events:auto}
 .brand .who{color:var(--muted)}
 .brand .social,.gbrand .social{display:flex;gap:6px}
@@ -177,8 +182,9 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
   .haze{height:calc(var(--maph) * .32)}
   .brand{left:max(16px,env(safe-area-inset-left,0px));top:calc(12px + env(safe-area-inset-top,0px))}
   .brand p,.brand .byline{display:none}
-  .brand h1{font-size:30px}
-  .brand h1 small{font-size:13px;margin-bottom:2px}
+  .brand h1{font-size:34px}
+  .brand h1 small{font-size:13px;margin-top:6px;gap:8px}
+  .brand h1 small::before{width:26px;height:6px}
   .year{right:max(16px,env(safe-area-inset-right,0px));top:calc(12px + env(safe-area-inset-top,0px))}
   .year b{font-size:34px}
   .year span{font-size:12px}
@@ -239,8 +245,9 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
 #rioFundo{inset:0;z-index:0;width:100%;height:100%;pointer-events:none}
 #globeCanvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
 .gbrand{top:calc(22px + env(safe-area-inset-top,0px));left:max(24px,env(safe-area-inset-left,0px));pointer-events:none}
-.gbrand h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(40px,5.4vw,72px);line-height:1;letter-spacing:-.035em}
-.gbrand h1 small{display:block;font-family:var(--f-body);font-size:17px;font-weight:600;letter-spacing:-.01em;color:var(--accent);margin-bottom:6px}
+.gbrand h1{margin:0;font-family:var(--f-marca);font-weight:500;font-size:clamp(44px,5.4vw,72px);line-height:1;letter-spacing:-.025em;font-optical-sizing:auto;text-wrap:balance}
+.gbrand h1 small{display:flex;align-items:center;gap:10px;margin-top:8px;font-family:var(--f-body);font-size:15px;line-height:1.2;font-weight:500;letter-spacing:0;color:var(--muted)}
+.gbrand h1 small::before{content:"";flex:none;width:34px;height:8px;background:var(--accent);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 8'%3E%3Cpath d='M1 4c4-4 6-4 10.700 0s6.600 4 10.700 0 6-4 10.600 0' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 8'%3E%3Cpath d='M1 4c4-4 6-4 10.700 0s6.600 4 10.700 0 6-4 10.600 0' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat}
 .gbrand p{margin:12px 0 0;max-width:40ch;font-size:15px;line-height:1.45;color:var(--muted);font-weight:500}
 .gbrand .byline{margin:12px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font-size:14px;pointer-events:auto}
 .glist{right:max(24px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);width:330px;border-radius:var(--r);padding:16px;box-sizing:border-box;max-height:calc(100% - 160px);overflow:auto}
@@ -264,8 +271,9 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
   .gbrand{left:max(16px,env(safe-area-inset-left,0px));top:calc(12px + env(safe-area-inset-top,0px))}
   .gbrand p,.gbrand .who{display:none}
   .gbrand .byline{margin-top:8px}
-  .gbrand h1{font-size:30px}
-  .gbrand h1 small{font-size:13px;margin-bottom:2px}
+  .gbrand h1{font-size:34px}
+  .gbrand h1 small{font-size:13px;margin-top:6px;gap:8px}
+  .gbrand h1 small::before{width:26px;height:6px}
   .gtools{right:max(16px,env(safe-area-inset-right,0px));top:calc(14px + env(safe-area-inset-top,0px))}
   .glist{top:56vh;left:0;right:0;bottom:0;transform:none;width:auto;max-height:none;border-radius:0;background:var(--sheet);backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:0 -1px 0 var(--line);
     padding:14px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -277,7 +285,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
 <canvas id="rioFundo" class="globeui" aria-hidden="true"></canvas>
 <div id="globe" class="globeui"><canvas id="globeCanvas" role="img" aria-label="Globo terrestre com as cidades mapeadas. Arraste para girar."></canvas></div>
 <header class="ui gbrand globeui">
-  <h1><small>Cheias no Brasil</small>Margens</h1>
+  <h1>Margens<small>Cheias no Brasil</small></h1>
   <div class="byline"><span class="who" style="color:var(--muted)">por Thais Adeodato</span>
     <span class="social">
       <a class="soc glass" href="https://www.linkedin.com/in/thais-morais-adeodato-porto/" target="_blank" rel="noopener" aria-label="LinkedIn de Thais Adeodato"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="1" width="14" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"></rect><path d="M4.6 6.8v4.6M4.6 4.7v.1M7.4 11.4V6.8m0 2.2c0-1.3.8-2.3 2-2.3s1.9.8 1.9 2.2v2.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg><span>LinkedIn</span></a>
@@ -298,7 +306,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
 <div class="ui loading" id="loading">carregando…</div>
 
 <header class="ui brand cityui">
-  <h1><small>Margens</small><span id="riverName">Mearim</span></h1>
+  <h1><span id="riverName">Mearim</span><small>Margens</small></h1>
   <div class="byline">
     <span class="who">por Thais Adeodato</span>
     <span class="social">
