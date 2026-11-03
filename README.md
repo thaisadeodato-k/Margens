@@ -1,6 +1,6 @@
 # Margens
 
-**Duas margens · Cheias no Brasil** — mapas 3D de cidades construídas na planície de um rio, mostrando, construção por
+**Margens · Cheias no Brasil** — mapas 3D de cidades construídas na planície de um rio, mostrando, construção por
 construção, até onde a água chega quando o rio sobe. A régua de cada mapa é a da estação fluviométrica da ANA na
 cidade, a mesma citada nas notícias das cheias.
 
