@@ -129,11 +129,11 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
 .card .dname{font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1.08;letter-spacing:-.03em;padding-right:34px}
 .card .per{display:inline-flex;align-items:center;gap:6px;margin:10px 0 12px;padding:4px 10px 4px 8px;border-radius:999px;background:var(--fill);font-size:12.5px;font-weight:500}
 .card .per::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--pc)}
-.card dl{display:grid;grid-template-columns:auto 1fr;margin:0;font-size:13.5px;border-radius:12px;background:var(--fill);overflow:hidden}
+.card dl{display:grid;grid-template-columns:minmax(0,1fr) fit-content(60%);margin:0;font-size:13.5px;border-radius:12px;background:var(--fill);overflow:hidden}
 .card dt,.card dd{padding:8px 12px;border-top:.5px solid var(--line)}
 .card dt:first-of-type,.card dd:first-of-type{border-top:0}
 .card dt{color:var(--muted)}
-.card dd{margin:0;min-width:0;overflow-wrap:anywhere;text-align:right;font-weight:500;font-variant-numeric:tabular-nums}
+.card dd{margin:0;min-width:0;overflow-wrap:break-word;text-align:right;font-weight:500;font-variant-numeric:tabular-nums}
 .card p{font-size:13.5px;line-height:1.5;margin:12px 0 0}
 .card .tb{margin-top:12px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--accent) 11%,transparent);font-size:13px;line-height:1.45}
 
@@ -293,7 +293,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
     </span></div>
   <p>Cidades construídas na planície de um rio. Escolha uma para ver, construção por construção, até onde a água chega quando o rio sobe.</p>
 </header>
-<div class="ui gtools globeui"><button class="pill glass temaBtn" type="button"></button><button id="aboutBtn2" class="pill glass" type="button">Sobre e método</button></div>
+<div class="ui gtools globeui"><button class="pill glass linguaBtn" type="button"></button><button class="pill glass temaBtn" type="button"></button><button id="aboutBtn2" class="pill glass" type="button">Sobre e método</button></div>
 <aside class="ui glist glass globeui" aria-label="Cidades mapeadas">
   <h2>Cidades mapeadas</h2>
   <p class="sub" id="cityCount"></p>
@@ -322,7 +322,7 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
   <span id="lvSub"></span>
   <div class="tools">
     <button id="globeBtn" class="pill glass back" type="button"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M7.5 2L3.5 6l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Outras cidades</button>
-    <button class="pill glass temaBtn" type="button"></button>
+    <button class="pill glass linguaBtn" type="button"></button><button class="pill glass temaBtn" type="button"></button>
     <button id="aboutBtn" class="pill glass" type="button">Sobre e método</button>
   </div>
 </div>
@@ -392,15 +392,57 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:3px solid 
   </article>
 </div>
 
+<script>
+/* Língua da página: ?lang=, depois a escolha guardada, depois a língua do navegador */
+(function(){
+  let l=null; try{ l=new URLSearchParams(location.search).get('lang'); }catch(e){}
+  if(l!=='en'&&l!=='pt'){ try{ l=localStorage.getItem('lingua'); }catch(e){} }
+  if(l!=='en'&&l!=='pt') l=/^pt/i.test(navigator.language||'')?'pt':'en';
+  window.LANG=l; window.LOC=l==='en'?'en-US':'pt-BR'; window.L=(pt,en)=>l==='en'?en:pt;
+  document.documentElement.lang=l==='en'?'en':'pt-BR';
+  document.querySelectorAll('.linguaBtn').forEach(b=>{ b.textContent=l==='en'?'PT':'EN'; const n=l==='en'?'Ver em português':'Read in English'; b.setAttribute('aria-label',n); b.title=n;
+    b.setAttribute('lang',l==='en'?'pt-BR':'en');
+    b.addEventListener('click',()=>{ const nova=l==='en'?'pt':'en'; try{ localStorage.setItem('lingua',nova); }catch(e){} const u=new URL(location.href); u.searchParams.set('lang',nova); location.href=u.href; }); });
+  if(l!=='en') return;
+  const txt=(sel,v)=>document.querySelectorAll(sel).forEach(e=>{ e.textContent=v; });
+  const ar=(sel,v)=>document.querySelectorAll(sel).forEach(e=>e.setAttribute('aria-label',v));
+  txt('.gbrand h1 small','Floods in Brazil');
+  txt('.who','by Thais Adeodato');
+  ar('a.soc[href*="linkedin"]','Thais Adeodato on LinkedIn'); ar('a.soc[href*="instagram"]','Thais Adeodato on Instagram');
+  txt('.gbrand > p','Cities built on a river floodplain. Choose one to see, building by building, how far the water reaches when the river rises.');
+  txt('#aboutBtn,#aboutBtn2','About & method');
+  ar('.glist','Mapped cities'); txt('.glist h2','Mapped cities');
+  txt('.glist .soon','The method uses only national public data, so it can be repeated in other riverside cities.');
+  txt('.ghint','Drag to rotate · tap a city');
+  ar('#globeCanvas','Globe with the mapped cities. Drag to rotate.');
+  ar('#map','3D map of the buildings and the river water');
+  txt('#loading','loading…');
+  { const b=document.getElementById('globeBtn'); b.lastChild.textContent='Other cities'; }
+  ar('.modes','Layers');
+  txt('.modes [data-mode="water"]','Water'); txt('.modes [data-mode="reach"]','Susceptibility'); txt('.modes [data-mode="sgb"]','Official data'); txt('.modes [data-mode="occ"]','Settlement');
+  ar('#play,#play2','Fill: raise the gauge to the largest flood');
+  txt('.nav-hint,.nav-hint2','Drag to rotate · right button or Shift to tilt · scroll to zoom');
+  ar('#hist,#vg','River gauge: drag to choose the level');
+  ar('#stepDn','Down 10 centimeters'); ar('#stepUp','Up 10 centimeters');
+  txt('.tl-key','Blue band: the darker it is, the more years the river reached that height.');
+  txt('#vgTitle','Gauge'); txt('.vg-head div span','Drag to raise or lower the water. Click a mark to go to it.');
+  const art=document.querySelector('#about article'), cl=art.querySelector('#aboutClose'), cy=art.querySelector('#aboutCity');
+  cl.setAttribute('aria-label','Close');
+  art.innerHTML="<i id=\"slotClose\"></i>\n    <h2 id=\"aboutTitle\">About &amp; method</h2>\n    <p>Cities built on the floodplain of a river that often overflows, mapped building by building with the same method and only public data. The gauge on each map is the one at the National Water Agency (ANA) streamflow station in that city, the same one quoted in news about the floods. Open a city to see how it was calibrated and validated.</p>\n    <h3>How the water was calculated</h3>\n    <p>The terrain is ANADEM, a terrain model by ANA and UFRGS that removes the effect of vegetation. For each point, the model measures the height above the nearest river. A point only floods if water can reach it from the river without crossing higher ground, so isolated low spots behind a hill stay dry. Each building is marked with the level at which the water touches its outline.</p>\n    <i id=\"slotCity\"></i>\n    <h3>Limits</h3>\n    <ul>\n      <li>ANADEM removes trees, but not buildings. In urban areas the terrain may still sit slightly above the real ground.</li>\n      <li>\"Reached\" means the water touches the outline of the building, not that it entered the house. With 30 m terrain, the flooded area tends to be wider at the edges than in real floods.</li>\n      <li>The model covers flooding of the main river. Floods of the tributaries themselves, flash floods and flooding from heavy rain are left out.</li>\n      <li>Building outlines were detected by AI in satellite images (Google Open Buildings and Microsoft). Some may be missing or merged. Height is estimated from size, because the dataset has no height.</li>\n      <li>This is a susceptibility map, for understanding the territory. It is not a forecast or a warning. In an emergency in Brazil, call Civil Defense (199) or the Fire Department (193).</li>\n    </ul>\n    <h3>General sources</h3>\n    <ul>\n      <li>Gauge and floods: ANA, <a href=\"https://www.snirh.gov.br/hidroweb/serieshistoricas\" target=\"_blank\" rel=\"noopener\">HidroWeb</a>, streamflow station of each city.</li>\n      <li>Terrain: <a href=\"https://www.ufrgs.br/hge/anadem-modelo-digital-de-terreno-mdt/\" target=\"_blank\" rel=\"noopener\">ANADEM v1</a> (ANA and IPH/UFRGS), 30 m.</li>\n      <li>Settlement period: <a href=\"https://geoservice.dlr.de/web/maps/eoc:wsfevolution\" target=\"_blank\" rel=\"noopener\">World Settlement Footprint Evolution</a> (DLR), 30 m, 1985–2015.</li>\n      <li>Buildings: <a href=\"https://overturemaps.org/\" target=\"_blank\" rel=\"noopener\">Overture Maps</a>, release 2026-09-23 (Google Open Buildings, Microsoft and OpenStreetMap).</li>\n      <li>Risk sectors and flood extents: Geological Survey of Brazil (SGB), <a href=\"https://rigeo.sgb.gov.br/\" target=\"_blank\" rel=\"noopener\">RIGeo</a>.</li>\n      <li>Globe outlines: Natural Earth, via world-atlas.</li>\n    </ul>\n    <p class=\"note\">Made by Thais Adeodato, in the same format as Camadas São Paulo.</p>";
+  art.querySelector('#slotClose').replaceWith(cl); art.querySelector('#slotCity').replaceWith(cy);
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script src="https://unpkg.com/deck.gl@8.9.36/dist.min.js"></script>
 <script>
 (function(){
 const Z=14, NT=256*2**Z;
+const CFG_EN={"pedreiras":{"name":"Pedreiras and Trizidela do Vale","tag":"Every building in Pedreiras and Trizidela do Vale, in Maranhão, and the Mearim River gauge level at which the water reaches it.","hint":"Readings from the Pedreiras II gauge (ANA), 1978 to 2025. The conversion to terrain has a margin of about 1 m.","sgbNote":"Drawn in the field by the Geological Survey of Brazil in April 2012. Tap a sector to see its data.","valLabel":"2009 flood","events":[{"h":6,"t":"<span class=\"full\">6 m · impacts begin</span><span class=\"short\">6 m</span>","c":"onset"},{"h":7.45,"t":"2024 · 2026"},{"h":9.81,"t":"2009"},{"h":10.1,"t":"1985","c":"minor"}],"occ":{"src":"WSF Evolution (DLR), 30 m, 1985–2015","note":"Year in which satellites first detected built-up area at the location of each building. It shows when the block was settled, not the year the building was built."},"about":"<h3>Pedreiras and Trizidela do Vale: calibrated by the onset of impacts</h3>\n<p>The two cities face each other across the Mearim River. In April 2026, 342 families were affected in Pedreiras and 121 in Trizidela. No observed flood extent has been mapped, and the station record does not give the elevation of the gauge zero. The conversion relies on a published fact: families start to be affected when the river passes 6 m on the gauge. In the model, that is when the water starts reaching buildings (1% of them). So the model's zero corresponds to 3.8 m on the gauge, with a margin of about 1 m.</p>\n<p>The Pedreiras II station (code 33281000) has readings since 1978. The largest floods were 10.10 m in 1985 and 9.81 m in 2009. In 2024 the peak was 7.45 m, and in April 2026, 7.44 m. With the gauge at the 2009 level, the flooded area covers most of the flood sectors the SGB drew in 2012. The landslide sectors are on slopes and the water does not reach them.</p>\n<div class=\"vbars\" id=\"vbars\"></div>\n<h3>The official data contradict each other</h3>\n<p>In the flood sectors, the original SGB file estimates about 12,000 people in each city. The updated version of the same sectors says 1,200, for the same 3,000 homes. At about 4 people per home, the consistent number is 12,000, and 1,200 looks like a lost zero.</p>\n<h3>Sources for this city</h3>\n<ul><li>Gauge: ANA, Pedreiras II station (33281000), readings from 1978 to August 2026.</li>\n<li>Risk sectors: SGB/CPRM, 2012, <a href=\"https://rigeo.sgb.gov.br/handle/doc/19860\" target=\"_blank\" rel=\"noopener\">Pedreiras</a> and <a href=\"https://rigeo.sgb.gov.br/handle/doc/19866\" target=\"_blank\" rel=\"noopener\">Trizidela do Vale</a>.</li>\n<li>Streets, river, schools and hospital: © <a href=\"https://www.openstreetmap.org/copyright\" target=\"_blank\" rel=\"noopener\">OpenStreetMap</a> contributors.</li>\n<li>Impacts starting above 6 m: <a href=\"https://agenciabrasil.ebc.com.br/politica/noticia/2023-04/llula-defende-atuacao-conjunta-de-governos-para-evitar-novas-tragedias\" target=\"_blank\" rel=\"noopener\">Agência Brasil</a>, April 2023. Families affected in 2026: <a href=\"https://oimparcial.com.br/cidades/2026/04/mais-de-400-familias-sao-afetadas-por-cheias-em-pedreiras-e-trizidela-do-vale/\" target=\"_blank\" rel=\"noopener\">O Imparcial</a>.</li></ul>"},"colatina":{"name":"Colatina","tag":"Every building in Colatina, in Espírito Santo, and the Doce River gauge level at which the water reaches it.","hint":"Readings from the Colatina Ponte gauge (ANA), 1938 to 2025. Calibrated with the observed extent of the 1997 flood.","sgbNote":"Risk sectors drawn by the Geological Survey of Brazil in 2019 and the observed extent of the 1997 flood, mapped by the SGB. Tap a sector to see its data.","valLabel":"1997 flood","events":[{"h":5.8,"t":"<span class=\"full\">flood stage</span><span class=\"short\">stage</span>","c":"minor"},{"h":7.5,"t":"2020","c":"minor"},{"h":7.99,"t":"1997"},{"h":8.9,"t":"2013","c":"minor al"},{"h":9.2,"t":"<span class=\"full\">1979 · estimated</span><span class=\"short\">1979</span>","c":"ar"}],"quotas":[{"h":5.3,"t":"alert stage"}],"occ":{"src":"WSF Evolution (DLR), 30 m, 1985–2015","note":"Year in which satellites first detected built-up area at the location of each building. It shows when the block was settled, not the year the building was built."},"about":"<h3>Colatina: calibrated with a real flood</h3>\n<p>The Geological Survey of Brazil (SGB) mapped the observed extents of the 1979 and 1997 floods in Colatina. In 1997, the Colatina Ponte station (code 56994500) read 7.99 m. The model level that best reproduces the 1997 extent sits 0.6 m above the gauge reading (gauge = model level − 0.6 m). Within the area the SGB mapped, the model covers 92% of the observed extent, and 74% of what it shows as flooded did flood in 1997. Counting building by building, 80% of those inside the 1997 extent appear as reached.</p>\n<p>The station has daily readings since 1938, but did not record the 1979 flood, the largest in the city's memory. According to the model, the 1979 extent corresponds to about 9.2 m on the gauge. A shop owner downtown said that in 2013 (8.90 m) the water stayed 20 cm below the 1979 mark (A Gazeta), which would give about 9.1 m. These are two independent estimates that agree, but neither is a reading.</p>\n<p>Civil Defense uses 5.80 m as the flood stage: from there, parts of Vila Lenira, Colatina Velha and Marista flood. At that level the model already reaches about 700 buildings. Remember that \"reached\" means the water touches the outline, not that it enters the house.</p>\n<p><b>IEMA 2 m terrain.</b> We tested the model with the 2 m terrain model (DTM) from IEMA (2012–2015 flight). The 1997 extent fits slightly more tightly (75% overlap, against 70% with ANADEM), but the building-by-building match drops from 80% to 60%, and 1979 would come out at 10.2 m. So the water model stays on ANADEM. With the IEMA terrain, the 1997 flood would reach about 1,260 buildings instead of 1,850: this difference shows how much the result depends on the terrain used.</p>\n<p>IEMA enters the map in two ways: in the shaded relief of the ground and in building height. About 65% of buildings have a measured height (surface minus terrain, from the same flight). The others, built after the flight, small or under trees, have a height estimated from their area.</p>\n<p>The 15 flood sectors the SGB drew in 2019 are 62% covered (by area) at the 1997 level. The least covered ones are along tributaries (the Pancas and Santa Maria do Doce rivers, Barbados stream), which also flood with their own high water, and on some stretches of the Doce's bank. The model only covers flooding of the Doce: water enters the tributaries at the Doce's level.</p>\n<div class=\"vbars\" id=\"vbars\"></div>\n<h3>Sources for this city</h3>\n<ul><li>Gauge: ANA, Colatina Ponte station (56994500), readings from 1938 to July 2026.</li>\n<li>SGB: <a href=\"https://rigeo.sgb.gov.br/handle/doc/24362\" target=\"_blank\" rel=\"noopener\">Definição da planície de inundação de Colatina</a> (2016), with the 1979 and 1997 extents; <a href=\"https://rigeo.sgb.gov.br/handle/doc/19463\" target=\"_blank\" rel=\"noopener\">risk sectors</a> (2019).</li>\n<li>Terrain and building height: 2 m DTM and DSM from <a href=\"https://geobases.es.gov.br/\" target=\"_blank\" rel=\"noopener\">IEMA/GEOBASES</a> (Espírito Santo, 2012–2015).</li>\n<li>Flood stage and account of 1979: <a href=\"https://www.agazeta.com.br/es/cotidiano/em-colatina-nivel-do-rio-doce-ultrapassa-cota-de-alerta-0122\" target=\"_blank\" rel=\"noopener\">A Gazeta (2022)</a> and <a href=\"https://www.agazeta.com.br/es/norte/colatina-lembrancas-e-fotos-historicas-da-grande-enchente-de-1979-0120\" target=\"_blank\" rel=\"noopener\">A Gazeta (2020)</a>.</li>\n<li>Streets, rivers, schools and hospitals: <a href=\"https://overturemaps.org/\" target=\"_blank\" rel=\"noopener\">Overture Maps</a> (data from OpenStreetMap and other sources). Short courses, driving schools and language schools do not count as schools.</li></ul>"}};
+const RISCO_EN={'muito alto':'Very high','alto':'High','médio':'Medium','medio':'Medium','baixo':'Low'};
 let CITIES=[];
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const fmt=(v,d=1)=>v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d});
-const int=v=>v.toLocaleString('pt-BR');
+const fmt=(v,d=1)=>v.toLocaleString(LOC,{minimumFractionDigits:d,maximumFractionDigits:d});
+const int=v=>v.toLocaleString(LOC);
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches&&new URLSearchParams(location.search).get('movimento')!=='sim';
 const isDark=()=>{const t=document.documentElement.getAttribute('data-theme'); return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;};
 function rgb(c){ const x=document.createElement('canvas').getContext('2d'); x.fillStyle=c; const s=x.fillStyle;
@@ -450,6 +492,7 @@ async function loadCity(id){
   occStop();
   const data=await fetchCity(id);
   cityId=id; D=data; K=D.cfg;
+  if(LANG==='en'){ K={...K,...CFG_EN[id]}; D.labels=D.labels.map(l=>({...l,t:l.t.replace(/^Rio (.+)$/,'$1 River')})); }
   GW=D.GW; GH=D.GH; X0=D.X0; Y0=D.Y0; R0=D.R0; HMIN=K.hmin; HMAX=K.hmax; LMIN=HMIN-R0; LMAX=HMAX-R0;
   const B=D.bounds; BOUNDS=[B[0],B[3],B[2],B[1]];
   YEARS=Object.keys(D.annmax).map(Number); NY=YEARS.length; EVENTS=K.events;
@@ -471,13 +514,13 @@ async function loadCity(id){
   picked=null; document.getElementById('card').hidden=true;
   document.getElementById('riverName').textContent=K.river;
   document.getElementById('tagline').textContent=K.tag;
-  document.getElementById('map').setAttribute('aria-label','Mapa 3D das construções de '+K.name+' e da água do rio '+K.river);
+  document.getElementById('map').setAttribute('aria-label',L('Mapa 3D das construções de '+K.name+' e da água do rio '+K.river,'3D map of the buildings of '+K.name+' and the water of the '+K.river+' River'));
   aboutCity();
   { const ob=document.querySelector('.modes [data-mode="occ"]'); ob.hidden=!D.bocc;
     if(!D.bocc&&mode==='occ'){ mode='water'; document.querySelectorAll('.modes button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.mode==='water')); } }
-  hc.setAttribute('aria-valuemin',HMIN); hc.setAttribute('aria-valuemax',HMAX); hc.setAttribute('aria-label','Régua do rio '+K.river+' em '+K.gauge+': arraste para escolher o nível');
+  hc.setAttribute('aria-valuemin',HMIN); hc.setAttribute('aria-valuemax',HMAX); hc.setAttribute('aria-label',L('Régua do rio '+K.river+' em '+K.gauge+': arraste para escolher o nível',K.river+' River gauge at '+K.gauge+': drag to choose the level'));
   const tk=[]; for(let h=HMIN;h<=HMAX;h++) tk.push(`<span>${h}${h===HMIN||h===HMAX?' m':''}</span>`); document.getElementById('ticks').innerHTML=tk.join('');
-  evBox.innerHTML=EVENTS.map((e,i)=>`<button type="button" class="ev ${e.c||''}" data-i="${i}" style="left:calc(6px + ${((e.h-HMIN)/(HMAX-HMIN)).toFixed(4)} * (100% - 12px))" aria-label="Ir para ${fmt(e.h,2)} m na régua">${e.t}</button>`).join('');
+  evBox.innerHTML=EVENTS.map((e,i)=>`<button type="button" class="ev ${e.c||''}" data-i="${i}" style="left:calc(6px + ${((e.h-HMIN)/(HMAX-HMIN)).toFixed(4)} * (100% - 12px))" aria-label="${L('Ir para ','Go to ')}${fmt(e.h,2)} ${L('m na régua','m on the gauge')}">${e.t}</button>`).join('');
   evBox.querySelectorAll('.ev').forEach(b=>b.addEventListener('click',()=>{ stop(); setLevel(EVENTS[+b.dataset.i].h-R0,true); }));
   buildGround();
   setLevel(K.start-R0,true);
@@ -512,7 +555,7 @@ const RAMP=[[4,[214,58,46]],[6,[240,110,48]],[7.5,[244,160,52]],[9,[236,200,80]]
 function rampAt(l){ if(l>=99) return null; const t=gH(l); if(t>12) return null; if(t<4) return RAMP[0][1]; for(let i=1;i<RAMP.length;i++){ if(t<=RAMP[i][0]){ const [a,ca]=RAMP[i-1],[b,cb]=RAMP[i], k=(t-a)/(b-a); return ca.map((v,j)=>Math.round(v+(cb[j]-v)*k)); } } return null; }
 
 /* época de ocupação (WSF Evolution): 1985 = já ocupado no início da série; 0 = não detectado até 2015 */
-const OCC=[['Já ocupado em 1985',1985,1985],['1986 a 1997',1986,1997],['1998 a 2015',1998,2015],['Não detectado até 2015',0,0]];
+const OCC=[[L('Já ocupado em 1985','Already settled in 1985'),1985,1985],[L('1986 a 1997','1986 to 1997'),1986,1997],[L('1998 a 2015','1998 to 2015'),1998,2015],[L('Não detectado até 2015','Not detected by 2015'),0,0]];
 const occBand=y=>y===1985?0:y>=1986&&y<=1997?1:y>=1998?2:3;
 /* degradê do ano de ocupação: roxo (cidade antiga) → magenta → coral → amarelo (2015) */
 const OSTOP=[[1985,[98,58,160]],[1992,[176,64,150]],[1998,[226,78,110]],[2004,[242,120,72]],[2010,[247,168,62]],[2015,[250,214,92]]];
@@ -585,41 +628,41 @@ function renderLegend(){
   const s=stats(), el=document.getElementById('legend'); let h='';
   if(mode==='water'){
     const last=s.fy.length?Math.max(...s.fy):null;
-    const hospRow=hosps.length===1?`<div class="row"><i style="background:var(--hit)"></i><span>${esc(hosps[0].n.replace(' de Pedreiras',''))}</span><em class="${s.hh?'alert':''}">${s.hh?'Atingido':'Seco'}</em></div>`
-      :`<div class="row"><i style="background:var(--hit)"></i><span>Hospitais</span><em class="${s.hh?'alert':''}">${s.hh} de ${hosps.length}</em></div>`;
-    h+=`<h2>Régua a ${fmt(gH(level),2)} m</h2>
-      <div class="big"><div><b>${int(s.nb)}</b><span>construções alcançadas</span></div><div><b>${s.fy.length} <small style="font-size:14px;color:var(--muted)">de ${NY}</small></b><span>anos em que o rio chegou aqui</span></div></div>
-      <div class="row"><i class="sq" style="background:var(--accent)"></i><span>Última vez</span><em>${last?last+' ('+fmt(D.annmax[last],2)+' m)':'nunca medido'}</em></div>
-      <h3>O que a água alcança</h3>
-      <div class="row"><i style="background:var(--hit)"></i><span>Escolas</span><em class="${s.hs?'alert':''}">${s.hs} de ${schools.length}</em></div>
+    const hospRow=hosps.length===1?`<div class="row"><i style="background:var(--hit)"></i><span>${esc(hosps[0].n.replace(' de Pedreiras',''))}</span><em class="${s.hh?'alert':''}">${s.hh?L('Atingido','Reached'):L('Seco','Dry')}</em></div>`
+      :`<div class="row"><i style="background:var(--hit)"></i><span>${L('Hospitais','Hospitals')}</span><em class="${s.hh?'alert':''}">${s.hh} ${L('de','of')} ${hosps.length}</em></div>`;
+    h+=`<h2>${L('Régua a','Gauge at')} ${fmt(gH(level),2)} m</h2>
+      <div class="big"><div><b>${int(s.nb)}</b><span>${L('construções alcançadas','buildings reached')}</span></div><div><b>${s.fy.length} <small style="font-size:14px;color:var(--muted)">${L('de','of')} ${NY}</small></b><span>${L('anos em que o rio chegou aqui','years the river reached here')}</span></div></div>
+      <div class="row"><i class="sq" style="background:var(--accent)"></i><span>${L('Última vez','Last time')}</span><em>${last?last+' ('+fmt(D.annmax[last],2)+' m)':L('nunca medido','never measured')}</em></div>
+      <h3>${L('O que a água alcança','What the water reaches')}</h3>
+      <div class="row"><i style="background:var(--hit)"></i><span>${L('Escolas','Schools')}</span><em class="${s.hs?'alert':''}">${s.hs} ${L('de','of')} ${schools.length}</em></div>
       ${hospRow}
-      <div class="row"><i class="sq" style="background:var(--road)"></i><span>Ruas alagadas</span><em>${fmt(s.road,0)} de ${fmt(D.curve.road_total,0)} km</em></div>
-      <div class="row"><i class="sq" style="background:var(--water)"></i><span>Área urbana sob água</span><em>${fmt(s.urb,1)} km²</em></div>
+      <div class="row"><i class="sq" style="background:var(--road)"></i><span>${L('Ruas alagadas','Flooded streets')}</span><em>${fmt(s.road,0)} ${L('de','of')} ${fmt(D.curve.road_total,0)} km</em></div>
+      <div class="row"><i class="sq" style="background:var(--water)"></i><span>${L('Área urbana sob água','Urban area under water')}</span><em>${fmt(s.urb,1)} km²</em></div>
       <p class="hint">${K.hint}</p>`;
   } else if(mode==='reach'){
-    h+=`<h2>Quando a água chega</h2>
+    h+=`<h2>${L('Quando a água chega','When the water arrives')}</h2>
       <div class="ramp" style="background:linear-gradient(90deg,${RAMP.map(([v,c])=>`rgb(${c}) ${((v-4)/8*100).toFixed(1)}%`).join(',')})"></div>
       <div class="ramp-lab"><span>4 m</span><span>6</span><span>8</span><span>10</span><span>12 m</span></div>
-      <p class="hint">Cor de cada construção: o nível da régua em que a água chega até ela. Cinza: acima de 12 m ou fora do alcance da água.</p>
-      <h3>Construções por faixa da régua</h3>
-      ${[[0,6,'Até 6 m'],[6,7.5,'6 a 7,5 m'],[7.5,9,'7,5 a 9 m'],[9,10.5,'9 a 10,5 m'],[10.5,12,'10,5 a 12 m']].map(([a,b,lab])=>{ let n=0; for(const x of BLD){ const hh=gH(x.t); if(x.t<99&&hh>a&&hh<=b) n++; } const c=rampAt((Math.max(a,4)+b)/2-R0); return `<div class="row"><i style="background:rgb(${c})"></i><span>${lab}</span><em>${int(n)}</em></div>`; }).join('')}
-      <div class="row"><i style="background:var(--block);box-shadow:inset 0 0 0 1px var(--line)"></i><span>Acima de 12 m</span><em>${int(BLD.filter(x=>x.t>=99||gH(x.t)>12).length)}</em></div>`;
+      <p class="hint">${L('Cor de cada construção: o nível da régua em que a água chega até ela. Cinza: acima de 12 m ou fora do alcance da água.','Color of each building: the gauge level at which the water reaches it. Gray: above 12 m or beyond the reach of the water.')}</p>
+      <h3>${L('Construções por faixa da régua','Buildings by gauge range')}</h3>
+      ${[[0,6,L('Até 6 m','Up to 6 m')],[6,7.5,L('6 a 7,5 m','6 to 7.5 m')],[7.5,9,L('7,5 a 9 m','7.5 to 9 m')],[9,10.5,L('9 a 10,5 m','9 to 10.5 m')],[10.5,12,L('10,5 a 12 m','10.5 to 12 m')]].map(([a,b,lab])=>{ let n=0; for(const x of BLD){ const hh=gH(x.t); if(x.t<99&&hh>a&&hh<=b) n++; } const c=rampAt((Math.max(a,4)+b)/2-R0); return `<div class="row"><i style="background:rgb(${c})"></i><span>${lab}</span><em>${int(n)}</em></div>`; }).join('')}
+      <div class="row"><i style="background:var(--block);box-shadow:inset 0 0 0 1px var(--line)"></i><span>${L('Acima de 12 m','Above 12 m')}</span><em>${int(BLD.filter(x=>x.t>=99||gH(x.t)>12).length)}</em></div>`;
   } else if(mode==='occ'){
     h+=occLegend();
   } else {
     const fl=sects.filter(x=>x.flood), sl=sects.filter(x=>!x.flood);
-    h+=`<h2>Dados oficiais da SGB</h2>
+    h+=`<h2>${L('Dados oficiais da SGB','Official SGB data')}</h2>
       <p class="hint" style="margin-top:0">${K.sgbNote}</p>
-      <h3>Parte coberta com a régua a ${fmt(gH(level),2)} m</h3>`;
+      <h3>${L('Parte coberta com a régua a','Share covered with the gauge at')} ${fmt(gH(level),2)} m</h3>`;
     if(K.sectList){
-      h+=fl.map(x=>`<div class="row"><i class="ring" style="--c:var(--sgb)"></i><span>Inundação · ${esc(x.mun==='Pedreiras'?'Pedreiras':'Trizidela')}</span><em>${Math.round(x.cov[s.i]*100)}%</em></div>`).join('')
-        + sl.map(x=>`<div class="row"><i class="ring" style="--c:var(--slide)"></i><span>Deslizamento · ${esc(x.local)}</span><em>${Math.round(x.cov[s.i]*100)}%</em></div>`).join('');
+      h+=fl.map(x=>`<div class="row"><i class="ring" style="--c:var(--sgb)"></i><span>${L('Inundação','Flood')} · ${esc(x.mun==='Pedreiras'?'Pedreiras':'Trizidela')}</span><em>${Math.round(x.cov[s.i]*100)}%</em></div>`).join('')
+        + sl.map(x=>`<div class="row"><i class="ring" style="--c:var(--slide)"></i><span>${L('Deslizamento','Landslide')} · ${esc(x.local)}</span><em>${Math.round(x.cov[s.i]*100)}%</em></div>`).join('');
     } else {
-      h+=`<div class="row"><i class="ring" style="--c:var(--sgb)"></i><span>${fl.length} setores de inundação</span><em>${Math.round(wavg(fl,s.i)*100)}%</em></div>
-        <div class="row"><i class="ring" style="--c:var(--slide)"></i><span>${sl.length} setores de deslizamento</span><em>${Math.round(wavg(sl,s.i)*100)}%</em></div>
-        <div class="row"><i style="background:none;box-shadow:none;width:auto"><span class="obsline"></span></i><span>Mancha real de 1997 (7,99 m)</span><em>${Math.round(D.fit['1997'].recall*100)}% acertada</em></div>`;
+      h+=`<div class="row"><i class="ring" style="--c:var(--sgb)"></i><span>${fl.length} ${L('setores de inundação','flood sectors')}</span><em>${Math.round(wavg(fl,s.i)*100)}%</em></div>
+        <div class="row"><i class="ring" style="--c:var(--slide)"></i><span>${sl.length} ${L('setores de deslizamento','landslide sectors')}</span><em>${Math.round(wavg(sl,s.i)*100)}%</em></div>
+        <div class="row"><i style="background:none;box-shadow:none;width:auto"><span class="obsline"></span></i><span>${L('Mancha real de 1997 (7,99 m)','Observed 1997 extent (7.99 m)')}</span><em>${Math.round(D.fit['1997'].recall*100)}% ${L('acertada','matched')}</em></div>`;
     }
-    h+=`<p class="hint">O modelo não usa esses desenhos. A coincidência com as áreas de inundação, e a distância das de deslizamento, é o teste de que ele funciona.</p>`;
+    h+=`<p class="hint">${L('O modelo não usa esses desenhos. A coincidência com as áreas de inundação, e a distância das de deslizamento, é o teste de que ele funciona.','The model does not use these drawings. Matching the flood areas, and staying away from the landslide areas, is the test that it works.')}</p>`;
   }
   el.innerHTML=h;
   if(mode==='occ') occPaint();
@@ -629,28 +672,28 @@ function occCounts(){ const yr=new Array(OEND-1985+1).fill(0), inYr=new Array(OE
   for(const b of BLD){ const k=b.o>0?b.o-1985:OEND-1985; yr[k]++; if(b.t<=level+1e-6){ inYr[k]++; tIn++; } } return {yr,inYr,tIn}; }
 function occLegend(){
   const {yr,inYr,tIn}=occCounts(), mx=Math.max(...yr.slice(1,OEND-1985)), c0=occColor(1985), c1=occColor(2015);
-  const bars=yr.slice(1,OEND-1985).map((n,i)=>{ const y=1986+i, c=occColor(y); return `<i data-y="${y}" title="${y}: ${int(n)} construções" style="height:${Math.max(4,n/mx*100).toFixed(1)}%;background:rgb(${c})"></i>`; }).join('');
+  const bars=yr.slice(1,OEND-1985).map((n,i)=>{ const y=1986+i, c=occColor(y); return `<i data-y="${y}" title="${y}: ${int(n)} ${L('construções','buildings')}" style="height:${Math.max(4,n/mx*100).toFixed(1)}%;background:rgb(${c})"></i>`; }).join('');
   const pct=(a,b)=>b?Math.round(a/b*100)+'%':'—', old=pct(inYr[0],tIn), oldAll=pct(yr[0],BLD.length);
-  return `<h2>A cidade em camadas</h2>
+  return `<h2>${L('A cidade em camadas','The city in layers')}</h2>
     <div class="occ-head" style="--oc1:rgb(${c0});--oc2:rgb(${c1})">
-      <button class="play" type="button" id="occPlay" aria-label="Ver a cidade crescer de 1985 a 2015"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="${occTimer?PAUSE:PLAY}"/></svg></button>
+      <button class="play" type="button" id="occPlay" aria-label="${L('Ver a cidade crescer de 1985 a 2015','Watch the city grow from 1985 to 2015')}"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="${occTimer?PAUSE:PLAY}"/></svg></button>
       <div><div class="occ-yr" id="occYr"></div><div class="occ-sub" id="occSub"></div></div>
     </div>
     <div class="occ-bars" id="occBars" aria-hidden="true">${bars}</div>
     <div class="occ-base"><span>1986</span><b></b><span>2015</span></div>
-    <input type="range" id="occYear" min="1985" max="${OEND}" step="1" value="${occYear}" aria-label="Ano: mostrar o que já estava ocupado">
+    <input type="range" id="occYear" min="1985" max="${OEND}" step="1" value="${occYear}" aria-label="${L('Ano: mostrar o que já estava ocupado','Year: show what was already settled')}">
     <div class="occ-tog seg" role="group" aria-label="Destaque">
-      <button type="button" data-focus="0" aria-pressed="${!occFocus}">Cidade toda</button>
-      <button type="button" data-focus="1" aria-pressed="${occFocus}">Onde a água chega</button>
+      <button type="button" data-focus="0" aria-pressed="${!occFocus}">${L('Cidade toda','Whole city')}</button>
+      <button type="button" data-focus="1" aria-pressed="${occFocus}">${L('Onde a água chega','Where the water reaches')}</button>
     </div>
-    <div class="big" style="margin-top:12px"><div><b>${old}</b><span>das ${int(tIn)} alcançadas a ${fmt(gH(level),2)} m já estavam lá em 1985</span></div><div><b>${oldAll}</b><span>na cidade toda</span></div></div>
-    <p class="hint">${esc(K.occ.note)} Fonte: ${esc(K.occ.src)}. Pixels de 30 m: uma casa nova numa quadra antiga aparece com o ano da quadra. Cinza: ocupação não detectada até 2015.</p>`;
+    <div class="big" style="margin-top:12px"><div><b>${old}</b><span>${L(`das ${int(tIn)} alcançadas a ${fmt(gH(level),2)} m já estavam lá em 1985`,`of the ${int(tIn)} reached at ${fmt(gH(level),2)} m were already there in 1985`)}</span></div><div><b>${oldAll}</b><span>${L('na cidade toda','in the whole city')}</span></div></div>
+    <p class="hint">${esc(K.occ.note)} ${L('Fonte','Source')}: ${esc(K.occ.src)}. ${L('Pixels de 30 m: uma casa nova numa quadra antiga aparece com o ano da quadra. Cinza: ocupação não detectada até 2015.','30 m pixels: a new house on an old block shows the year of the block. Gray: settlement not detected by 2015.')}</p>`;
 }
 function occPaint(){
   const yEl=document.getElementById('occYr'); if(!yEl) return;
   let n=0; for(const b of BLD) if(occShown(b)) n++;
-  yEl.textContent=occYear>=OEND?'Hoje':occYear===1985?'1985':String(occYear);
-  document.getElementById('occSub').textContent=occYear>=OEND?int(n)+' construções':occYear===1985?int(n)+' construções em áreas já ocupadas':int(n)+' construções em áreas já ocupadas';
+  yEl.textContent=occYear>=OEND?L('Hoje','Today'):occYear===1985?'1985':String(occYear);
+  document.getElementById('occSub').textContent=occYear>=OEND?int(n)+L(' construções',' buildings'):int(n)+L(' construções em áreas já ocupadas',' buildings in areas already settled');
   document.querySelectorAll('#occBars i').forEach(i=>{ const y=+i.dataset.y; i.classList.toggle('off',y>occYear); i.classList.toggle('now',y===occYear); });
   const r=document.getElementById('occYear'); if(r&&+r.value!==occYear) r.value=occYear;
   const ic=document.querySelector('#occPlay path'); if(ic) ic.setAttribute('d',occTimer?PAUSE:PLAY);
@@ -673,7 +716,7 @@ document.getElementById('legend').addEventListener('input',e=>{ if(e.target.id==
 function updateTop(){
   const s=stats();
   document.getElementById('lvBig').innerHTML=fmt(gH(level),2)+'<small>m</small>';
-  document.getElementById('lvSub').textContent='na régua de '+K.gauge+' · '+int(s.nb)+' construções';
+  document.getElementById('lvSub').textContent=L('na régua de '+K.gauge+' · '+int(s.nb)+' construções','on the '+K.gauge+' gauge · '+int(s.nb)+' buildings');
 }
 const X='<button class="close" id="cardClose" type="button" aria-label="Fechar"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>';
 function showBuilding(b,noRefresh){
@@ -681,28 +724,28 @@ function showBuilding(b,noRefresh){
   const out=b.t>=99||gH(b.t)>16, reach=out?'—':fmt(gH(b.t),1);
   const c=rampAt(b.t);
   card.innerHTML=X+`<div class="yr">${reach}<small>${out?'':'m'}</small></div>
-    <div class="per" style="--pc:${c?`rgb(${c})`:'var(--block)'}">${out?'Fora do alcance das cheias medidas':b.t<=level?'Alcançada neste nível':'Seca neste nível'}</div>
-    <dl><dt>A água chega com a régua a</dt><dd>${out?'mais de 16 m':fmt(gH(b.t),1)+' m'}</dd><dt>Anos em que isso aconteceu</dt><dd>${out?'nenhum':freq(gH(b.t)).length+' de '+NY}</dd><dt>Área do contorno</dt><dd>${int(b.a)} m²</dd><dt>Altura no mapa</dt><dd>${fmt(b.h)} m ${b.hm?'(medida, IEMA 2012–2015)':'(estimada pela área)'}</dd>${b.o>=0?`<dt>Área ocupada</dt><dd>${b.o>0?`<i style="display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:rgb(${occColor(b.o)})"></i>`:''}${b.o===1985?'em 1985 ou antes':b.o?'desde '+b.o:'não detectada até 2015'}</dd>`:''}</dl>
-    <p class="hint" style="margin:10px 0 0">Contorno detectado por IA em imagem de satélite (Overture Maps).</p>`;
+    <div class="per" style="--pc:${c?`rgb(${c})`:'var(--block)'}">${out?L('Fora do alcance das cheias medidas','Beyond the reach of measured floods'):b.t<=level?L('Alcançada neste nível','Reached at this level'):L('Seca neste nível','Dry at this level')}</div>
+    <dl><dt>${L('A água chega com a régua a','Water reaches it with the gauge at')}</dt><dd>${out?L('mais de 16 m','over 16 m'):fmt(gH(b.t),1)+' m'}</dd><dt>${L('Anos em que isso aconteceu','Years this happened')}</dt><dd>${out?L('nenhum','none'):freq(gH(b.t)).length+L(' de ',' of ')+NY}</dd><dt>${L('Área do contorno','Outline area')}</dt><dd>${int(b.a)} m²</dd><dt>${L('Altura no mapa','Height on the map')}</dt><dd>${fmt(b.h)} m ${b.hm?L('(medida, IEMA 2012–2015)','(measured, IEMA 2012–2015)'):L('(estimada pela área)','(estimated from area)')}</dd>${b.o>=0?`<dt>${L('Área ocupada','Area settled')}</dt><dd>${b.o>0?`<i style="display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;background:rgb(${occColor(b.o)})"></i>`:''}${b.o===1985?L('em 1985 ou antes','in 1985 or earlier'):b.o?L('desde ','since ')+b.o:L('não detectada até 2015','not detected by 2015')}</dd>`:''}</dl>
+    <p class="hint" style="margin:10px 0 0">${L('Contorno detectado por IA em imagem de satélite (Overture Maps).','Outline detected by AI in a satellite image (Overture Maps).')}</p>`;
   card.hidden=false; document.getElementById('cardClose').onclick=closeCard; if(!noRefresh) refresh();
 }
 function showPoi(p){
   picked=null; const card=document.getElementById('card');
   card.innerHTML=X+`<div class="dname">${esc(p.n)}</div>
-    <div class="per" style="--pc:${p.s<=level?'var(--hit)':'var(--ink)'}">${p.a==='hospital'?'Hospital':'Escola'} · ${p.s<=level?'atingido neste nível':'seco neste nível'}</div>
-    <dl><dt>A água chega com a régua a</dt><dd>${p.s>=25?'mais de 25 m':fmt(gH(p.s),1)+' m'}</dd><dt>Anos em que isso aconteceu</dt><dd>${p.s>=25?'nenhum':freq(gH(p.s)).length+' de '+NY}</dd><dt>Fonte</dt><dd>${esc(K.poiSource)}</dd></dl>`;
+    <div class="per" style="--pc:${p.s<=level?'var(--hit)':'var(--ink)'}">${p.a==='hospital'?'Hospital':L('Escola','School')} · ${p.s<=level?L('atingido neste nível','reached at this level'):L('seco neste nível','dry at this level')}</div>
+    <dl><dt>${L('A água chega com a régua a','Water reaches it with the gauge at')}</dt><dd>${p.s>=25?L('mais de 25 m','over 25 m'):fmt(gH(p.s),1)+' m'}</dd><dt>${L('Anos em que isso aconteceu','Years this happened')}</dt><dd>${p.s>=25?L('nenhum','none'):freq(gH(p.s)).length+L(' de ',' of ')+NY}</dd><dt>${L('Fonte','Source')}</dt><dd>${esc(K.poiSource)}</dd></dl>`;
   card.hidden=false; document.getElementById('cardClose').onclick=closeCard; refresh();
 }
 function showSector(s){
   picked=null; const card=document.getElementById('card'), i=covIdx();
   const dup=(K.dup||[]).includes(s.id);
   card.innerHTML=X+`<div class="dname">${esc(s.mun)}</div>
-    <div class="per" style="--pc:var(${s.flood?'--sgb':'--slide'})">${s.flood?'Inundação':'Deslizamento'} · risco ${esc(s.risco)}</div>
+    <div class="per" style="--pc:var(${s.flood?'--sgb':'--slide'})">${s.flood?L('Inundação','Flood'):L('Deslizamento','Landslide')} · ${L('risco '+esc(s.risco),esc(RISCO_EN[String(s.risco).trim().toLowerCase()]||s.risco)+' risk')}</div>
     <h3 style="margin:0 0 10px;font-size:15px;font-weight:600">${esc(s.local)}</h3>
-    <dl><dt>${K.sectList?'Moradias':'Edificações'}</dt><dd>${int(s.morad)}</dd><dt>Pessoas</dt><dd>${dup?'12.000 ou 1.200':int(s.pess)}</dd><dt>Área</dt><dd>${fmt(s.area_km2,2)} km²</dd><dt>Coberto com a régua a ${fmt(gH(level),2)} m</dt><dd>${Math.round(s.cov[i]*100)}%</dd></dl>
-    <p>${esc(s.desc)}</p>
-    ${dup?`<div class="tb">O arquivo original estima 12.000 pessoas. A versão atualizada diz 1.200, para as mesmas 3.000 moradias. O número coerente é 12.000.</div>`:''}
-    ${s.interv?`<p class="hint" style="margin:10px 0 0">Intervenção sugerida: ${esc(s.interv)}</p>`:''}`;
+    <dl><dt>${K.sectList?L('Moradias','Homes'):L('Edificações','Buildings')}</dt><dd>${int(s.morad)}</dd><dt>${L('Pessoas','People')}</dt><dd>${dup?L('12.000 ou 1.200','12,000 or 1,200'):int(s.pess)}</dd><dt>${L('Área','Area')}</dt><dd>${fmt(s.area_km2,2)} km²</dd><dt>${L('Coberto com a régua a','Covered with the gauge at')} ${fmt(gH(level),2)} m</dt><dd>${Math.round(s.cov[i]*100)}%</dd></dl>
+    <p${LANG==='en'?' lang="pt-BR"':''}>${esc(s.desc)}</p>${LANG==='en'?'<p class="hint" style="margin:6px 0 0">Original SGB description, in Portuguese.</p>':''}
+    ${dup?`<div class="tb">${L('O arquivo original estima 12.000 pessoas. A versão atualizada diz 1.200, para as mesmas 3.000 moradias. O número coerente é 12.000.','The original file estimates 12,000 people. The updated version says 1,200, for the same 3,000 homes. The consistent number is 12,000.')}</div>`:''}
+    ${s.interv?`<p class="hint" style="margin:10px 0 0">${L('Intervenção sugerida','Suggested action (SGB, in Portuguese)')}: ${esc(s.interv)}</p>`:''}`;
   card.hidden=false; document.getElementById('cardClose').onclick=closeCard;
 }
 function closeCard(){ document.getElementById('card').hidden=true; picked=null; refresh(); }
@@ -734,14 +777,14 @@ function drawHist(){
 /* leitura em palavras: com que frequência o rio chegou a este nível */
 function updateRead(){
   if(!D) return; const H=gH(level), n=freq(H).length, f=n/NY;
-  const w=n===0?'Nunca medido':f>=1/3?'Comum':f>=.1?'Pouco comum':'Raro';
-  const t=n?`<b>${w}</b> · o rio chegou aqui em ${n} de ${NY} anos`:`<b>${w}</b> · acima de tudo o que a régua mediu desde ${YEARS[0]}`;
+  const w=n===0?L('Nunca medido','Never measured'):f>=1/3?L('Comum','Common'):f>=.1?L('Pouco comum','Uncommon'):L('Raro','Rare');
+  const t=n?L(`<b>${w}</b> · o rio chegou aqui em ${n} de ${NY} anos`,`<b>${w}</b> · the river reached here in ${n} of ${NY} years`):L(`<b>${w}</b> · acima de tudo o que a régua mediu desde ${YEARS[0]}`,`<b>${w}</b> · above everything the gauge has measured since ${YEARS[0]}`);
   for(const id of ['tlRead','vgRead']){ const el=document.getElementById(id); if(el) el.innerHTML=t; }
 }
 let raf=0;
 function setLevel(v,exact){
   const hc0=Math.max(HMIN,Math.min(HMAX,gH(v))), hv=exact?Math.round(hc0*100)/100:Math.round(hc0*20)/20; level=hv-R0;
-  hc.setAttribute('aria-valuenow',hv); hc.setAttribute('aria-valuetext',fmt(hv,2)+' metros na régua');
+  hc.setAttribute('aria-valuenow',hv); hc.setAttribute('aria-valuetext',fmt(hv,2)+L(' metros na régua',' meters on the gauge'));
   updateTop(); renderLegend(); drawHist();
   if(picked) showBuilding(picked,true);
   if(!raf) raf=requestAnimationFrame(async()=>{ raf=0; await buildWater(); refresh(); });
@@ -766,13 +809,13 @@ function vgH(y,H){ return HMAX-(y-14)/(H-28)*(HMAX-HMIN); }
 function plain(t){ const d=document.createElement('div'); d.innerHTML=t; const f=d.querySelector('.full'); return (f?f.textContent:d.textContent).trim(); }
 function vgMarks(){
   const out=[], near=h=>out.some(o=>Math.abs(o.h-h)<.06);
-  for(const e of EVENTS){ const t=plain(e.t).replace(/^[\d.,]+ ?m · /,''); out.push({h:e.h,t,k:/onset/.test(e.c||'')||/cota/.test(t)?'quota':'event'}); }
+  for(const e of EVENTS){ const t=plain(e.t).replace(/^[\d.,]+ ?m · /,''); out.push({h:e.h,t,k:/onset/.test(e.c||'')||/cota|stage/.test(t)?'quota':'event'}); }
   for(const q of (K.quotas||[])) if(!near(q.h)) out.push({h:q.h,t:q.t,k:'quota'});
   const first=(list,t)=>{ const v=list.filter(p=>p.s<25).map(p=>gH(p.s)); if(!v.length) return; const h=Math.min(...v); if(h>=HMIN&&h<=HMAX) out.push({h,t,k:'hit'}); };
-  first(schools,'1ª escola alcançada'); first(hosps,'1º hospital alcançado');
+  first(schools,L('1ª escola alcançada','1st school reached')); first(hosps,L('1º hospital alcançado','1st hospital reached'));
   const am=YEARS.map(y=>D.annmax[y]).sort((a,b)=>b-a), q=f=>am[Math.max(0,Math.ceil(f*NY)-1)];
   const add=(h,t)=>{ if(h>=HMIN&&h<=HMAX&&!near(h)) out.push({h,t,k:'freq'}); };
-  add(q(.5),'metade dos anos'); add(q(.1),'1 em cada 10 anos');
+  add(q(.5),L('metade dos anos','half of the years')); add(q(.1),L('1 em cada 10 anos','1 in every 10 years'));
   return out.sort((a,b)=>b.h-a.h);
 }
 function drawVG(){
@@ -781,9 +824,9 @@ function drawVG(){
   const x=vg.getContext('2d'); x.scale(dpr,dpr); const W=r.width, H=r.height, Y=h=>vgY(h,H);
   const ink=css('--ink'), muted=css('--muted'), hit=css('--hit'), obs=css('--obs'), plate=css('--block'), panel=css('--panel-solid');
   const wr=rgb(css('--water')).join(','), fw=11, sx=17, sw=30, lx=sx+sw+12, cur=gH(level), yl=Y(cur);
-  document.getElementById('vgTitle').textContent='Régua de '+K.gauge;
-  document.getElementById('vgKey').innerHTML=`<i></i>Faixa à esquerda: em quantos anos o rio chegou a cada altura (${YEARS[0]}–${YEARS[NY-1]}). Escuro, quase todo ano; claro, raro.`;
-  vg.setAttribute('aria-valuemin',HMIN); vg.setAttribute('aria-valuemax',HMAX); vg.setAttribute('aria-valuenow',cur.toFixed(2)); vg.setAttribute('aria-valuetext',fmt(cur,2)+' metros na régua');
+  document.getElementById('vgTitle').textContent=L('Régua de '+K.gauge,K.gauge+' gauge');
+  document.getElementById('vgKey').innerHTML=L(`<i></i>Faixa à esquerda: em quantos anos o rio chegou a cada altura (${YEARS[0]}–${YEARS[NY-1]}). Escuro, quase todo ano; claro, raro.`,`<i></i>Band on the left: in how many years the river reached each height (${YEARS[0]}–${YEARS[NY-1]}). Dark, almost every year; light, rare.`);
+  vg.setAttribute('aria-valuemin',HMIN); vg.setAttribute('aria-valuemax',HMAX); vg.setAttribute('aria-valuenow',cur.toFixed(2)); vg.setAttribute('aria-valuetext',fmt(cur,2)+L(' metros na régua',' meters on the gauge'));
   // frequência: fração dos anos em que o máximo anual chegou a cada altura
   for(let h=HMIN;h<HMAX-1e-9;h+=.1){ const sh=freq(h+.05).length/NY;
     x.fillStyle=`rgba(${wr},${(.05+.9*Math.pow(sh,.55)).toFixed(3)})`; x.fillRect(0,Y(h+.1),fw,Y(h)-Y(h+.1)+.6); }
@@ -806,7 +849,7 @@ function drawVG(){
     x.globalAlpha=1;
     x.strokeStyle=col; x.lineWidth=1; x.beginPath(); x.moveTo(sx+sw,y0); x.lineTo(lx-6,y0); x.lineTo(lx-2,y); x.stroke();
     x.fillStyle=col; x.font=(m.k==='event'?'600 ':m.k==='freq'?'italic 400 ':'500 ')+'11.5px '+font;
-    let t=(Math.round(m.h*100)/100).toLocaleString('pt-BR',{maximumFractionDigits:2})+' m · '+m.t, mw=W-lx-2;
+    let t=(Math.round(m.h*100)/100).toLocaleString(LOC,{maximumFractionDigits:2})+' m · '+m.t, mw=W-lx-2;
     while(x.measureText(t).width>mw&&t.length>4) t=t.slice(0,-2)+'…';
     x.fillText(t,lx,y); x.globalAlpha=1; vgLabels.push({y,h:m.h}); });
   // nível atual
@@ -854,8 +897,8 @@ function aboutCity(){
   const box=document.getElementById('aboutCity'); box.innerHTML=K.about||''; box.hidden=false;
   const i=Math.round((K.valLevel-R0)*10), fl=D.sect.filter(s=>/nunda/i.test(s.tipo)), sl=D.sect.filter(s=>!/nunda/i.test(s.tipo));
   if(!document.getElementById('vbars')) return;
-  if(D.fit&&D.fit['1997']) bars('vbars',[['Mancha real de 1997 · acerto',D.fit['1997'].recall],['Mancha real de 1997 · precisão',D.fit['1997'].precision],['Setores de inundação',wavg(fl,i)],['Setores de deslizamento',wavg(sl,i)]]);
-  else bars('vbars',D.sect.map(s=>[(/nunda/i.test(s.tipo)?'Inundação · '+(s.mun==='Pedreiras'?'Pedreiras':'Trizidela'):'Deslizamento · '+s.local),s.cov[i]]));
+  if(D.fit&&D.fit['1997']) bars('vbars',[[L('Mancha real de 1997 · acerto','Observed 1997 extent · recall'),D.fit['1997'].recall],[L('Mancha real de 1997 · precisão','Observed 1997 extent · precision'),D.fit['1997'].precision],[L('Setores de inundação','Flood sectors'),wavg(fl,i)],[L('Setores de deslizamento','Landslide sectors'),wavg(sl,i)]]);
+  else bars('vbars',D.sect.map(s=>[(/nunda/i.test(s.tipo)?L('Inundação · ','Flood · ')+(s.mun==='Pedreiras'?'Pedreiras':'Trizidela'):L('Deslizamento · ','Landslide · ')+s.local),s.cov[i]]));
 }
 async function retheme(){ rioSujo=true; readTheme(); if(!D){ return; } buildGround(); await buildWater(); if(deckgl) deckgl.setProps({effects:lighting(),layers:layers()}); drawHist(); renderLegend(); }
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',retheme);
@@ -863,7 +906,7 @@ new MutationObserver(retheme).observe(document.documentElement,{attributes:true,
 /* botão de modo claro e escuro: mostra o modo para o qual vai mudar e guarda a escolha */
 const ICONE_LUA='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13.5 10.2A6 6 0 0 1 5.8 2.5a6 6 0 1 0 7.7 7.7z" fill="currentColor"/></svg>';
 const ICONE_SOL='<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="currentColor"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M3 13l1.4-1.4M11.6 4.4L13 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
-function marcarTema(){ const esc=isDark(), nome=esc?'Mudar para o modo claro':'Mudar para o modo escuro';
+function marcarTema(){ const esc=isDark(), nome=esc?L('Mudar para o modo claro','Switch to light mode'):L('Mudar para o modo escuro','Switch to dark mode');
   document.querySelectorAll('.temaBtn').forEach(b=>{ b.innerHTML=esc?ICONE_SOL:ICONE_LUA; b.setAttribute('aria-label',nome); b.title=nome; }); }
 document.querySelectorAll('.temaBtn').forEach(b=>b.addEventListener('click',()=>{ const novo=isDark()?'light':'dark';
   document.documentElement.setAttribute('data-theme',novo); try{ localStorage.setItem('tema',novo); }catch(e){} marcarTema(); }));
@@ -977,13 +1020,13 @@ new ResizeObserver(()=>{ gSize(); drawGlobe(); }).observe(gc);
 
 function renderList(){
   document.getElementById('cityList').innerHTML=CITIES.map(c=>`<button type="button" class="cityrow" data-id="${c.id}">
-    <span class="cn">${esc(c.name)}</span><span class="cm">${esc(c.uf)} · rio ${esc(c.river)}</span>
-    <span class="cs">${int(c.nb)} construções · régua desde ${c.since} · maior cheia ${fmt(c.record.h,2)} m (${c.record.y})</span></button>`).join('');
+    <span class="cn">${esc(L(c.name,c.name.replace(' e ',' and ')))}</span><span class="cm">${esc(c.uf)} · ${L('rio '+esc(c.river),esc(c.river)+' River')}</span>
+    <span class="cs">${int(c.nb)} ${L('construções','buildings')} · ${L('régua desde','gauge since')} ${c.since} · ${L('maior cheia','largest flood')} ${fmt(c.record.h,2)} m (${c.record.y})</span></button>`).join('');
   document.querySelectorAll('.cityrow').forEach(b=>{
     b.addEventListener('click',()=>openCity(b.dataset.id));
     b.addEventListener('mouseenter',()=>{ hoverId=b.dataset.id; }); b.addEventListener('mouseleave',()=>{ hoverId=null; });
     b.addEventListener('focus',()=>{ hoverId=b.dataset.id; }); });
-  document.getElementById('cityCount').textContent=CITIES.length===1?'1 cidade mapeada':CITIES.length+' cidades mapeadas';
+  document.getElementById('cityCount').textContent=CITIES.length===1?L('1 cidade mapeada','1 mapped city'):CITIES.length+L(' cidades mapeadas',' mapped cities');
 }
 
 function tween(ms,fn){ return new Promise(res=>{ if(reduceMotion||ms<=0){ fn(1); res(); return; } const t0=performance.now();
@@ -1005,9 +1048,9 @@ async function openCity(id){
   const loading=fetchCity(id).catch(err=>err);
   await tween(900,e=>{ rot=[r0[0]+dl*e, r0[1]+(r1[1]-r0[1])*e, 0]; drawGlobe(); });
   await tween(700,e=>{ scaleK=1+e*7; drawGlobe(); });
-  document.getElementById('loading').hidden=false; document.getElementById('loading').textContent='carregando '+c.short+'…';
+  document.getElementById('loading').hidden=false; document.getElementById('loading').textContent=L('carregando ','loading ')+c.short+'…';
   const res=await loading;
-  if(res instanceof Error){ document.getElementById('loading').textContent='Não foi possível carregar '+c.short+'. Verifique a conexão e tente de novo.'; await backToGlobe(); flying=false; return; }
+  if(res instanceof Error){ document.getElementById('loading').textContent=L('Não foi possível carregar '+c.short+'. Verifique a conexão e tente de novo.','Could not load '+c.short+'. Check your connection and try again.'); await backToGlobe(); flying=false; return; }
   await loadCity(id);
   document.documentElement.dataset.view='city';
   try{ history.replaceState(null,'','#'+id); }catch(e){}
@@ -1036,7 +1079,7 @@ document.getElementById('globeBtn').addEventListener('click',backToGlobe);
   try{
     const [w,cs]=await Promise.all([fetch('data/world.json').then(r=>r.json()),fetch('data/cities.json').then(r=>r.json())]);
     WORLD=w; CITIES=cs;
-  }catch(e){ document.getElementById('cityList').innerHTML='<p class="hint">Não foi possível carregar a lista de cidades. Recarregue a página.</p>'; }
+  }catch(e){ document.getElementById('cityList').innerHTML='<p class="hint">'+L('Não foi possível carregar a lista de cidades. Recarregue a página.','Could not load the list of cities. Reload the page.')+'</p>'; }
   renderList(); document.getElementById('loading').hidden=true;
   makeDeck({longitude:-45,latitude:-12,zoom:3,pitch:0,bearing:0});
   requestAnimationFrame(spin);

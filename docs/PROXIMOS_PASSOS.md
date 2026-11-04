@@ -25,7 +25,8 @@ Prazo de referência: envio da candidatura ao AISS (Erasmus Mundus) até ~10/12/
 3. [ ] **Auditoria das construções detectadas por IA**: amostra sorteada (~200 pontos) dentro e fora da área alagável,
        conferida pela Thais no QGIS contra as ortofotos de 25 cm do IEMA (ECW). Medir omissões e falsos positivos.
 4. [ ] **Incerteza e proveniência na página**: faixa de construções pela margem da régua; ficha de fonte por número.
-5. [ ] **Versão em inglês** da página e **estudo de caso de uma página** em inglês acadêmico.
+5. [x] **Versão em inglês** da página (botão PT/EN, publicada em 03/11/2026; link direto: `?lang=en`). As descrições dos setores da SGB ficam em português, com aviso.
+   [ ] **Estudo de caso de uma página** em inglês acadêmico.
 
 ## Camadas cruzadas com as construções
 - [x] **Época de ocupação em Colatina** (WSF Evolution, 1985–2015): feito em 03/11/2026, modo "Ocupação" na página.
